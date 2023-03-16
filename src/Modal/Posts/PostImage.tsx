@@ -63,6 +63,7 @@ const PostImage: React.FC<PostImageProps> = ({
       numberOfComments: 0,
       createdAt: serverTimestamp() as Timestamp,
       likes: 0,
+      isLiked: false,
     };
 
     try {

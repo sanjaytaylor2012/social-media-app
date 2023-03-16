@@ -12,11 +12,58 @@ export interface UserType {
   bio: string;
 }
 
-// const defaultUserState: userType = {
-//   selectedPost: null,
+// interface UserStates {
+//   myFollowings: UserType[];
+//   // visitedCommunities
+// }
+
+// const defaultUserStates: UserStates = {
+//   myFollowings: [],
 // };
 
-// export const userState = atom({
-//   key: "userState",
-//   default: defaultUserState,
+// export const UserStates = atom<UserStates>({
+//   key: "UserState",
+//   default: defaultUserStates,
 // });
+
+export interface followProfile {
+  name: string;
+  profilePic?: string;
+}
+
+interface UserStates {
+  myFollowings: followProfile[];
+  totalFollowings: number;
+  // visitedCommunities
+}
+
+const defaultUserStates: UserStates = {
+  myFollowings: [],
+  totalFollowings: 0,
+};
+
+export const UserStates = atom<UserStates>({
+  key: "UserState",
+  default: defaultUserStates,
+});
+
+export const UserStates1 = atom<UserStates>({
+  key: "UserState1",
+  default: defaultUserStates,
+});
+
+interface FollowerStates {
+  myFollowers: followProfile[];
+  totalFollowers: number;
+  // visitedCommunities
+}
+
+const defaultFollowerStates: FollowerStates = {
+  myFollowers: [],
+  totalFollowers: 0,
+};
+
+export const FollowerStates = atom<FollowerStates>({
+  key: "FollowerState",
+  default: defaultFollowerStates,
+});

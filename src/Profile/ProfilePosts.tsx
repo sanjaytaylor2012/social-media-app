@@ -22,6 +22,8 @@ import { useRecoilState } from "recoil";
 import { BsHeart } from "react-icons/bs";
 import { FaRegComment } from "react-icons/fa";
 import GridPostItem from "./GridPostItem";
+import PostLoader from "@/Layout/PostLoader";
+import ProfilePostLoader from "./ProfilePostLoader";
 
 type PostsProps = {
   userDoc: UserType;
@@ -37,7 +39,7 @@ const Posts: React.FC<PostsProps> = ({ userDoc }) => {
       setLoading(true);
       // get posts from this community
       const postsQuery = query(
-        collection(firestore, `users/${user!.email!.split("@")[0]}/posts`),
+        collection(firestore, `users/${userDoc.displayName}/posts`),
         orderBy("createdAt", "desc")
       );
 
@@ -45,7 +47,7 @@ const Posts: React.FC<PostsProps> = ({ userDoc }) => {
 
       //store in post state
       const posts = postDocs.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-      console.log(posts);
+      // console.log(posts);
       setPostStateValue((prev) => ({
         ...prev,
         posts: posts as Post[],
@@ -77,15 +79,19 @@ const Posts: React.FC<PostsProps> = ({ userDoc }) => {
           POSTS
         </Text>
       </Flex>
-      <SimpleGrid
-        position="relative"
-        columns={3}
-        spacing={{ base: 0.5, md: 7 }}
-      >
-        {postStateValue.posts.map((item) => {
-          return <GridPostItem item={item} />;
-        })}
-      </SimpleGrid>
+      {loading ? (
+        <ProfilePostLoader />
+      ) : (
+        <SimpleGrid
+          position="relative"
+          columns={3}
+          spacing={{ base: 0.5, md: 7 }}
+        >
+          {postStateValue.posts.map((item) => {
+            return <GridPostItem userDoc={userDoc} key={item.id} item={item} />;
+          })}
+        </SimpleGrid>
+      )}
     </Stack>
   );
 };

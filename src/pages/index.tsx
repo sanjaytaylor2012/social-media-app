@@ -6,18 +6,26 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import { app, auth, firestore } from "@/firebase/clientApp";
 import safeJsonStringify from "safe-json-stringify";
 import { getAuth } from "firebase/auth";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { doc, getDoc } from "firebase/firestore";
 import { GetServerSidePropsContext } from "next";
+import { UserType } from "@/atoms/userAtom";
+import router from "next/router";
 
 const inter = Inter({ subsets: ["latin"] });
 
 type HomeProps = {
-  loggedIn: string;
+  userDoc: UserType;
 };
 
-const Home: React.FC<HomeProps> = ({ loggedIn }) => {
-  // console.log(loggedIn);
+const Home: React.FC<HomeProps> = ({ userDoc }) => {
+  const [user] = useAuthState(auth);
+
+  useEffect(() => {
+    if (userDoc.displayName != user!.email!.split("@")[0]) {
+      router.push(`/`);
+    }
+  }, []);
 
   return <h1>hi</h1>;
 };

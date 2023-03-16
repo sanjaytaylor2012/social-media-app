@@ -50,7 +50,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ setLoginState }) => {
               border="1px solid"
             />
           </Flex>
-          <OAuth />
+          {/* <OAuth /> */}
           <Text
             mt={10}
             cursor="pointer"

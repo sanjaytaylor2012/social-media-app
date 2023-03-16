@@ -12,6 +12,7 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { signOut } from "firebase/auth";
+import { Router, useRouter } from "next/router";
 import React from "react";
 import { AiOutlineMenu } from "react-icons/ai";
 import { useRecoilState } from "recoil";
@@ -20,7 +21,7 @@ type NavMenuProps = {};
 
 const NavMenu: React.FC<NavMenuProps> = () => {
   const [modalState, setModalState] = useRecoilState(AuthenticationModalState);
-
+  const router = useRouter();
   return (
     <>
       <Menu>
@@ -51,7 +52,14 @@ const NavMenu: React.FC<NavMenuProps> = () => {
           >
             Switch Accounts
           </MenuItem>
-          <MenuItem onClick={() => signOut(auth)}>Log out</MenuItem>
+          <MenuItem
+            onClick={() => {
+              signOut(auth);
+              router.push("/");
+            }}
+          >
+            Log out
+          </MenuItem>
         </MenuList>
       </Menu>
 

@@ -29,7 +29,7 @@ const SignUp: React.FC<SignUpProps> = ({ setLoginState }) => {
         <Text align="center" fontWeight={800} color="gray.500" mb={5}>
           Sign up to see photos and videos from your friends.
         </Text>
-        <Button width="100%" variant="login" bg="blue.400">
+        {/* <Button width="100%" variant="login" bg="blue.400">
           <OAuth />
         </Button>
         <Flex align="center" width="100%">
@@ -47,7 +47,7 @@ const SignUp: React.FC<SignUpProps> = ({ setLoginState }) => {
             color="gray.400"
             border="1px solid"
           />
-        </Flex>
+        </Flex> */}
 
         <SignUpInputs />
       </Flex>
