@@ -1,4 +1,4 @@
-import { Comment, CommentState, Post } from "@/atoms/postAtom";
+import { Comment, CommentState, Like, Post } from "@/atoms/postAtom";
 import { UserType } from "@/atoms/userAtom";
 import { auth, firestore } from "@/firebase/clientApp";
 import {
@@ -7,6 +7,8 @@ import {
   getDoc,
   getDocs,
   increment,
+  orderBy,
+  query,
   serverTimestamp,
   Timestamp,
   writeBatch,
@@ -38,7 +40,7 @@ const usePost = (userDoc: UserType, postObject: Post) => {
 
       const newComment: Comment = {
         commentorProfilePic: profilePic,
-        commentorName: userDoc.displayName,
+        commentorName: user!.email!.split("@")[0],
         body: comment,
         createdAt: serverTimestamp() as Timestamp,
         id: id,
@@ -65,10 +67,11 @@ const usePost = (userDoc: UserType, postObject: Post) => {
 
       setCommentState((prev) => ({
         ...prev,
-        selectedPost: prev.selectedPost,
-        isLiked: prev.isLiked,
+        // selectedPost: prev.selectedPost,
+        // profileLikes: [prev.profileLikes],
+        // // isLiked: prev.isLiked,
         comments: [...prev.comments, newComment],
-        likes: prev.likes,
+        // likes: prev.likes,
       }));
     } catch (error: any) {
       console.log(error.message);
@@ -78,30 +81,45 @@ const usePost = (userDoc: UserType, postObject: Post) => {
   const getComments = async () => {
     setLoading(true);
     try {
-      const allComments = await getDocs(
+      const commentsQuery = query(
         collection(
           firestore,
           `users/${userDoc.displayName}/posts/${postObject.id}/comments`
-        )
+        ),
+        orderBy("createdAt", "asc")
       );
 
+      const allComments = await getDocs(commentsQuery);
+
       const snippets = allComments.docs.map((doc) => ({ ...doc.data() }));
-      console.log(snippets);
+      // console.log(snippets);
 
       const CurrentPostRef = doc(
         firestore,
-        `users/${user!.email!.split("@")[0]}/posts/${postObject.id}`
+        `users/${userDoc.displayName}/posts/${postObject.id}`
       );
       const currentPost = await getDoc(CurrentPostRef);
       const userLikes = currentPost?.data()?.likes;
-      const isLiked = currentPost?.data()?.isLiked;
+
+      const CurrentPostLikes = await getDocs(
+        collection(
+          firestore,
+          `users/${userDoc.displayName}/posts/${postObject.id}/likes`
+        )
+      );
+
+      const currentPostLikes = CurrentPostLikes.docs.map((doc) => ({
+        ...doc.data(),
+      }));
 
       setCommentState((prev) => ({
         selectedPost: postObject,
+        profileLikes: currentPostLikes as Like[],
         comments: snippets as Comment[],
-        isLiked: isLiked,
+        // isLiked: isLiked,
         likes: userLikes,
       }));
+
       setLoading(false);
     } catch (error: any) {
       console.log(error.message);
@@ -110,7 +128,6 @@ const usePost = (userDoc: UserType, postObject: Post) => {
 
   const onLike = async (postId: string | undefined) => {
     try {
-      setLoading(true);
       const batch = writeBatch(firestore);
 
       const CurrentUserRef = doc(
@@ -120,10 +137,19 @@ const usePost = (userDoc: UserType, postObject: Post) => {
       const currentUser = await getDoc(CurrentUserRef);
       const profilePic = currentUser?.data()?.profilePic;
 
-      const newLike = {
+      const newLike: Like = {
         name: user!.email!.split("@")[0],
         profilePic: profilePic,
       };
+
+      setCommentState((prev) => ({
+        // ...prev,
+        selectedPost: prev.selectedPost,
+        // isLiked: true,
+        profileLikes: [...prev.profileLikes, newLike],
+        likes: prev.likes + 1,
+        comments: [...prev.comments],
+      }));
 
       batch.set(
         doc(
@@ -137,26 +163,16 @@ const usePost = (userDoc: UserType, postObject: Post) => {
 
       batch.update(
         doc(firestore, `users/${userDoc.displayName}/posts/${postId}`),
-        { isLiked: true }
-      );
-
-      batch.update(
-        doc(firestore, `users/${userDoc.displayName}/posts/${postId}`),
         {
           likes: increment(1),
         }
       );
 
-      await batch.commit();
-      setLoading(false);
+      console.log(newLike);
 
-      setCommentState((prev) => ({
-        ...prev,
-        selectedPost: prev.selectedPost,
-        isLiked: true,
-        likes: prev.likes + 1,
-        comments: [...prev.comments],
-      }));
+      await batch.commit();
+
+      console.log("on like profile Likes", commentState.profileLikes);
     } catch (error: any) {
       console.log(error.message);
     }
@@ -164,7 +180,14 @@ const usePost = (userDoc: UserType, postObject: Post) => {
 
   const onUnLike = async (postId: string | undefined) => {
     try {
-      setLoading(true);
+      setCommentState((prev) => ({
+        ...prev,
+        profileLikes: prev.profileLikes.filter(
+          (item) => item.name !== user!.email!.split("@")[0]
+        ),
+        likes: prev.likes - 1,
+      }));
+
       const batch = writeBatch(firestore);
 
       batch.delete(
@@ -176,10 +199,10 @@ const usePost = (userDoc: UserType, postObject: Post) => {
         )
       );
 
-      batch.update(
-        doc(firestore, `users/${userDoc.displayName}/posts/${postId}`),
-        { isLiked: false }
-      );
+      // batch.update(
+      //   doc(firestore, `users/${userDoc.displayName}/posts/${postId}`),
+      //   { isLiked: false }
+      // );
 
       batch.update(
         doc(firestore, `users/${userDoc.displayName}/posts/${postId}`),
@@ -189,20 +212,13 @@ const usePost = (userDoc: UserType, postObject: Post) => {
       );
 
       await batch.commit();
-      setLoading(false);
 
-      setCommentState((prev) => ({
-        ...prev,
-        selectedPost: prev.selectedPost,
-        isLiked: false,
-        likes: prev.likes - 1,
-        comments: [...prev.comments],
-      }));
+      console.log("on unlike profile Likes", commentState.profileLikes);
     } catch (error: any) {
       console.log(error.message);
     }
   };
 
-  return { addComment, loading, getComments, onLike, onUnLike };
+  return { addComment, setLoading, loading, getComments, onLike, onUnLike };
 };
 export default usePost;

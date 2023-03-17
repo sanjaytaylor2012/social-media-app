@@ -1,4 +1,4 @@
-import { CommentState, Post } from "@/atoms/postAtom";
+import { Comment, CommentState, Post } from "@/atoms/postAtom";
 import { UserType } from "@/atoms/userAtom";
 import usePost from "@/hooks/usePost";
 import useProfile from "@/hooks/useProfile";
@@ -31,6 +31,9 @@ import ProfilePostLoader from "@/Profile/ProfilePostLoader";
 import CommentInput from "./CommentInput";
 import PostModalHeader from "./PostModalHeader";
 import PostInfoSection from "./PostInfoSection";
+import { FiMenu } from "react-icons/fi";
+import { query, collection, where, orderBy } from "firebase/firestore";
+import { firestore } from "@/firebase/clientApp";
 
 type ViewFollowingModalProps = {
   userDoc: UserType;
@@ -49,9 +52,15 @@ const ViewFollowingModal: React.FC<ViewFollowingModalProps> = ({
   const [comment, setComment] = useState("");
   const [commentState, setCommentState] = useRecoilState(CommentState);
 
-  //   useEffect(() => {
-  //     getComments(item);
-  //   }, []);
+  const messagesEndRef = useRef<null | HTMLElement>(null);
+
+  const scrollToBottom = () => {
+    !!messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [commentState.comments]);
 
   const handleAddComment = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -63,24 +72,16 @@ const ViewFollowingModal: React.FC<ViewFollowingModalProps> = ({
   };
 
   return (
-    <Modal size="4xl" isOpen={open} onClose={() => setOpen(false)}>
+    <Modal size="3xl" isOpen={open} onClose={() => setOpen(false)}>
       <ModalOverlay />
       <ModalContent>
-        {/* <ModalHeader>
-          <Flex justify="center">
-            <Text fontSize="12pt" fontWeight={400}>
-              Following
-            </Text>
-          </Flex>
-          <Divider border="1px solid" borderColor="gray.300" />
-        </ModalHeader> */}
-        <ModalCloseButton />
+        {/* <ModalCloseButton /> */}
         <ModalBody p={0}>
           <Flex width="100%">
             <Image
               objectFit="cover"
-              height="600px"
-              width="400px"
+              height="400px"
+              width="267px"
               src={item.imageURL}
             />
             <Stack width="100%" justify="space-between">
@@ -90,18 +91,25 @@ const ViewFollowingModal: React.FC<ViewFollowingModalProps> = ({
                 {loading ? (
                   <ProfilePostLoader />
                 ) : (
-                  <Stack height="50vh" overflowX="hidden" overflowY="auto">
-                    {commentState.comments.map((comment: any) => {
+                  <Stack height="30vh" overflowX="hidden" overflowY="auto">
+                    {commentState.comments.map((comment: Comment) => {
                       return <CommentItem comment={comment} />;
                     })}
+                    <PostInfoSection
+                      onLike={onLike}
+                      onUnLike={onUnLike}
+                      item={item}
+                      loading={loading}
+                    />
                   </Stack>
                 )}
 
-                <PostInfoSection
-                  onLike={onLike}
-                  onUnLike={onUnLike}
-                  item={item}
-                />
+                {/* <Stack height="30vh" overflowX="hidden" overflowY="auto">
+                  {commentState.comments.map((comment: any) => {
+                    return <CommentItem comment={comment} />;
+                  })}
+                  <div ref={messagesEndRef} />
+                </Stack> */}
               </Stack>
               <CommentInput
                 loading={loading}

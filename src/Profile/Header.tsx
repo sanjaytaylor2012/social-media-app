@@ -9,6 +9,7 @@ import React, { useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { AiOutlineInstagram } from "react-icons/ai";
 import FollowButton from "./FollowButton";
+import { v4 as uuidv4 } from "uuid";
 
 type HeaderProps = { userDoc: UserType };
 
@@ -124,9 +125,15 @@ const Header: React.FC<HeaderProps> = ({ userDoc }) => {
         )}
       </Stack>
 
-      <ViewFollowingModal userDoc={userDoc} open={open} setOpen={setOpen} />
+      <ViewFollowingModal
+        key={userDoc.displayName}
+        userDoc={userDoc}
+        open={open}
+        setOpen={setOpen}
+      />
 
       <ViewFollowersModal
+        key={userDoc.uid}
         userDoc={userDoc}
         openFollowers={openFollowers}
         setOpenFollowers={setOpenFollowers}

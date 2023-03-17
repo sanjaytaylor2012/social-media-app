@@ -1,7 +1,9 @@
 import { Comment } from "@/atoms/postAtom";
+import { auth } from "@/firebase/clientApp";
 import { Flex, Icon, Stack, Image, Text } from "@chakra-ui/react";
 import moment from "moment";
 import React, { useEffect } from "react";
+import { useAuthState } from "react-firebase-hooks/auth";
 import { AiOutlineInstagram } from "react-icons/ai";
 
 type CommentItemProps = {
@@ -9,10 +11,12 @@ type CommentItemProps = {
 };
 
 const CommentItem: React.FC<CommentItemProps> = ({ comment }) => {
+  const [user] = useAuthState(auth);
+
   return (
-    <Flex>
+    <Flex width="100%" justify="start">
       {comment.commentorProfilePic === "" ? (
-        <Icon as={AiOutlineInstagram} />
+        <Icon fontSize="30pt" as={AiOutlineInstagram} mr={4} />
       ) : (
         <Image
           objectFit="cover"
@@ -22,11 +26,13 @@ const CommentItem: React.FC<CommentItemProps> = ({ comment }) => {
           mr={4}
         />
       )}
-
       <Stack>
-        <Text fontWeight="600" mb={-2}>
-          {comment.commentorName}
-        </Text>
+        <Flex justify="start">
+          <Text fontWeight="600" mb={-2} mr={2}>
+            {comment.commentorName}
+          </Text>
+          <Text>{comment.body}</Text>
+        </Flex>
         <Text fontSize="8pt" color="gray.400">
           {moment(new Date(comment.createdAt?.seconds * 1000)).fromNow() ===
           "Invalid date"
@@ -34,8 +40,6 @@ const CommentItem: React.FC<CommentItemProps> = ({ comment }) => {
             : moment(new Date(comment.createdAt?.seconds * 1000)).fromNow()}
         </Text>
       </Stack>
-
-      <Text>{comment.body}</Text>
     </Flex>
   );
 };

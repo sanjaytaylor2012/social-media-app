@@ -11,7 +11,6 @@ export type Post = {
   createdAt: Timestamp;
   creatorProfilePic?: string;
   likes: number;
-  isLiked: false;
 };
 
 interface PostState {
@@ -39,10 +38,16 @@ export interface Comment {
   likes: number;
 }
 
+export interface Like {
+  name: string;
+  profilePic: string;
+}
+
 interface CommentState {
   selectedPost: Post | null;
   comments: Comment[];
-  isLiked: boolean;
+  profileLikes: Like[];
+  // isLiked: boolean;
   likes: number;
   // postVotes?
 }
@@ -50,7 +55,8 @@ interface CommentState {
 const defaultCommentState: CommentState = {
   selectedPost: null,
   comments: [],
-  isLiked: false,
+  profileLikes: [],
+  // isLiked: false,
   likes: 0,
 };
 

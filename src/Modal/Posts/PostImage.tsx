@@ -63,7 +63,6 @@ const PostImage: React.FC<PostImageProps> = ({
       numberOfComments: 0,
       createdAt: serverTimestamp() as Timestamp,
       likes: 0,
-      isLiked: false,
     };
 
     try {
@@ -128,7 +127,12 @@ const PostImage: React.FC<PostImageProps> = ({
 
         <ModalBody>
           <Flex align="end">
-            <Image src={selectedFile} height="400px" width="400px" />
+            <Image
+              src={selectedFile}
+              objectFit="cover"
+              height="300px"
+              width="200px"
+            />
             <Stack>
               <Flex>
                 <Icon ml={2} fontSize={25} as={AiOutlineInstagram} mr={2} />
@@ -138,7 +142,7 @@ const PostImage: React.FC<PostImageProps> = ({
               <Textarea
                 borderRadius="0px"
                 placeholder="Write a caption..."
-                height="400px"
+                height="300px"
                 width="200px"
                 resize="none"
                 onChange={(e) => setCaption(e.target.value)}

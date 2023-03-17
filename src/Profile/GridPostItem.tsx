@@ -11,44 +11,24 @@ type GridPostItemProps = { item: Post; userDoc: UserType };
 
 const GridPostItem: React.FC<GridPostItemProps> = ({ item, userDoc }) => {
   const [open, setOpen] = useState(false);
-  const { getComments } = usePost(userDoc, item);
+  const { getComments, setLoading } = usePost(userDoc, item);
 
   return (
     <>
-      <Tooltip
-        //   bg="none"
-        position="absolute"
-        label={
-          <Stack>
-            <Flex align="center">
-              <Icon as={BsHeart} mr={2} />
-              <Text>{item.likes}</Text>
-            </Flex>
-            <Flex align="center">
-              <Icon as={FaRegComment} mr={2} />
-              <Text>{item.numberOfComments}</Text>
-            </Flex>
-          </Stack>
-        }
-        top={20}
-        //   bottom={0}
-        fontWeight={600}
-        placement="top"
-      >
-        <Image
-          onClick={() => {
-            setOpen(true);
-            getComments();
-          }}
-          _hover={{
-            filter: "brightness(70%)",
-          }}
-          objectFit="cover"
-          src={item.imageURL}
-          width={{ base: "30vw", md: "20vw" }}
-          height={{ base: "30vw", md: "20vw" }}
-        />
-      </Tooltip>
+      <Image
+        onClick={() => {
+          setLoading(true);
+          getComments();
+          setOpen(true);
+        }}
+        _hover={{
+          filter: "brightness(70%)",
+        }}
+        objectFit="cover"
+        src={item.imageURL}
+        width={{ base: "30vw", md: "20vw" }}
+        height={{ base: "30vw", md: "20vw" }}
+      />
       <PostModal userDoc={userDoc} item={item} open={open} setOpen={setOpen} />
     </>
   );

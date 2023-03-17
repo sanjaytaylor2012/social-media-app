@@ -1,22 +1,42 @@
 import { Post } from "@/atoms/postAtom";
 import { UserType } from "@/atoms/userAtom";
-import { Flex, Stack, Divider, Image, Text } from "@chakra-ui/react";
-import React from "react";
+import { auth } from "@/firebase/clientApp";
+import { Flex, Stack, Divider, Image, Text, Icon } from "@chakra-ui/react";
+import React, { useState } from "react";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { FiMenu } from "react-icons/fi";
+import DeletePostModal from "./DeletePostModal/DeletePostModal";
 
 type PostModalHeaderProps = { item: Post; userDoc: UserType };
 
 const PostModalHeader: React.FC<PostModalHeaderProps> = ({ item, userDoc }) => {
+  const [open, setOpen] = useState(false);
+  const [user] = useAuthState(auth);
+
   return (
     <>
-      <Flex align="center">
-        <Image
-          objectFit="cover"
-          borderRadius="full"
-          boxSize="40px"
-          src={userDoc.profilePic}
-          mr={4}
-        />
-        <Text fontWeight="600">{item.creatorDisplayName}</Text>
+      <Flex align="center" justify="space-between">
+        <Flex align="center">
+          <Image
+            objectFit="cover"
+            borderRadius="full"
+            boxSize="40px"
+            src={userDoc.profilePic}
+            mr={4}
+          />
+          <Text fontWeight="600">{item.creatorDisplayName}</Text>
+        </Flex>
+
+        {userDoc.displayName === user!.email!.split("@")[0] && (
+          <Icon
+            as={FiMenu}
+            mr={4}
+            onClick={() => {
+              setOpen(true);
+            }}
+            cursor="pointer"
+          />
+        )}
       </Flex>
       <Divider width="100%" color="gray.300" border="1px solid" />
       <Flex align="center">
@@ -32,6 +52,13 @@ const PostModalHeader: React.FC<PostModalHeaderProps> = ({ item, userDoc }) => {
         </Text>
         <Text>{item.body}</Text>
       </Flex>
+      <DeletePostModal
+        user={user}
+        item={item}
+        userDoc={userDoc}
+        open={open}
+        setOpen={setOpen}
+      />
     </>
   );
 };
