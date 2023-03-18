@@ -20,7 +20,7 @@ import { useRecoilState } from "recoil";
 import { v4 as uuidv4 } from "uuid";
 
 //userDoc is currently viewed profile
-const usePost = (userDoc: UserType, postObject: Post) => {
+const usePost = (postObject: Post, userDoc?: UserType | undefined) => {
   const [loading, setLoading] = useState(false);
   const [user] = useAuthState(auth);
   const [commentState, setCommentState] = useRecoilState(CommentState);
@@ -50,7 +50,7 @@ const usePost = (userDoc: UserType, postObject: Post) => {
       batch.set(
         doc(
           firestore,
-          `users/${userDoc.displayName}/posts/${postId}/comments/${id}`
+          `users/${postObject.creatorDisplayName}/posts/${postId}/comments/${id}`
         ),
         newComment
       );
@@ -67,24 +67,21 @@ const usePost = (userDoc: UserType, postObject: Post) => {
 
       setCommentState((prev) => ({
         ...prev,
-        // selectedPost: prev.selectedPost,
-        // profileLikes: [prev.profileLikes],
-        // // isLiked: prev.isLiked,
+
         comments: [...prev.comments, newComment],
-        // likes: prev.likes,
       }));
     } catch (error: any) {
       console.log(error.message);
     }
   };
 
-  const getComments = async () => {
+  const getComments = async (displayName: string) => {
     setLoading(true);
     try {
       const commentsQuery = query(
         collection(
           firestore,
-          `users/${userDoc.displayName}/posts/${postObject.id}/comments`
+          `users/${displayName}/posts/${postObject.id}/comments`
         ),
         orderBy("createdAt", "asc")
       );
@@ -96,7 +93,7 @@ const usePost = (userDoc: UserType, postObject: Post) => {
 
       const CurrentPostRef = doc(
         firestore,
-        `users/${userDoc.displayName}/posts/${postObject.id}`
+        `users/${displayName}/posts/${postObject.id}`
       );
       const currentPost = await getDoc(CurrentPostRef);
       const userLikes = currentPost?.data()?.likes;
@@ -104,7 +101,7 @@ const usePost = (userDoc: UserType, postObject: Post) => {
       const CurrentPostLikes = await getDocs(
         collection(
           firestore,
-          `users/${userDoc.displayName}/posts/${postObject.id}/likes`
+          `users/${displayName}/posts/${postObject.id}/likes`
         )
       );
 
@@ -154,7 +151,7 @@ const usePost = (userDoc: UserType, postObject: Post) => {
       batch.set(
         doc(
           firestore,
-          `users/${userDoc.displayName}/posts/${postId}/likes/${
+          `users/${postObject.creatorDisplayName}/posts/${postId}/likes/${
             user!.email!.split("@")[0]
           }`
         ),
@@ -162,7 +159,10 @@ const usePost = (userDoc: UserType, postObject: Post) => {
       );
 
       batch.update(
-        doc(firestore, `users/${userDoc.displayName}/posts/${postId}`),
+        doc(
+          firestore,
+          `users/${postObject.creatorDisplayName}/posts/${postId}`
+        ),
         {
           likes: increment(1),
         }
@@ -193,7 +193,7 @@ const usePost = (userDoc: UserType, postObject: Post) => {
       batch.delete(
         doc(
           firestore,
-          `users/${userDoc.displayName}/posts/${postId}/likes/${
+          `users/${postObject.creatorDisplayName}/posts/${postId}/likes/${
             user!.email!.split("@")[0]
           }`
         )
@@ -205,7 +205,10 @@ const usePost = (userDoc: UserType, postObject: Post) => {
       // );
 
       batch.update(
-        doc(firestore, `users/${userDoc.displayName}/posts/${postId}`),
+        doc(
+          firestore,
+          `users/${postObject.creatorDisplayName}/posts/${postId}`
+        ),
         {
           likes: increment(-1),
         }

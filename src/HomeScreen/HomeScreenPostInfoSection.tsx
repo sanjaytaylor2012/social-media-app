@@ -1,5 +1,6 @@
 import { CommentState, Post } from "@/atoms/postAtom";
 import { auth } from "@/firebase/clientApp";
+import ViewLikesModal from "@/Modal/Profile/PostModal/ViewLikesModal";
 import { Flex, Divider, Icon, Text } from "@chakra-ui/react";
 import moment from "moment";
 import React, { useState } from "react";
@@ -8,20 +9,23 @@ import { AiFillHeart } from "react-icons/ai";
 import { AiOutlineHeart } from "react-icons/ai";
 import { TbMessageCircle2 } from "react-icons/tb";
 import { useRecoilState } from "recoil";
-import ViewLikesModal from "./ViewLikesModal";
 
-type PostInfoSectionProps = {
+type HomeScreenPostInfoSectionProps = {
   item: Post;
   onLike: (postId: string) => Promise<void>;
   onUnLike: (postId: string) => Promise<void>;
   loading: boolean;
+  setPostModalOpen: (input: boolean) => void;
+  getComments: (input: string) => Promise<void>;
 };
 
-const PostInfoSection: React.FC<PostInfoSectionProps> = ({
+const HomeScreenPostInfoSection: React.FC<HomeScreenPostInfoSectionProps> = ({
   item,
   onLike,
   onUnLike,
   loading,
+  setPostModalOpen,
+  getComments,
 }) => {
   const [currentCommentState, setCurrentCommentState] =
     useRecoilState(CommentState);
@@ -57,20 +61,15 @@ const PostInfoSection: React.FC<PostInfoSectionProps> = ({
           />
         )}
 
-        <Icon mb="20px" fontSize={30} as={TbMessageCircle2} />
+        <Icon mb={2} fontSize={30} as={TbMessageCircle2} />
       </Flex>
 
-      {currentCommentState.profileLikes.length === 1 && (
-        <Text
-          fontWeight={600}
-          cursor="pointer"
-          _hover={{ color: "gray.300" }}
-          onClick={() => setOpen(true)}
-        >
+      {currentCommentState.likes === 1 && (
+        <Text fontWeight={600} cursor="pointer" _hover={{ color: "gray.300" }}>
           Liked by {currentCommentState.profileLikes[0].name}
         </Text>
       )}
-      {currentCommentState.profileLikes.length > 1 && (
+      {currentCommentState.likes > 1 && (
         <Text
           fontWeight={600}
           cursor="pointer"
@@ -82,11 +81,21 @@ const PostInfoSection: React.FC<PostInfoSectionProps> = ({
         </Text>
       )}
 
-      <Text fontSize="10pt" color="gray.400">
-        {moment(new Date(item?.createdAt?.seconds * 1000)).fromNow()}
-      </Text>
+      {currentCommentState.comments.length > 2 && (
+        <Text
+          cursor="pointer"
+          _hover={{ color: "gray.300" }}
+          onClick={() => {
+            getComments(item.creatorDisplayName);
+            setPostModalOpen(true);
+          }}
+        >
+          View all {currentCommentState.comments.length} comments
+        </Text>
+      )}
+
       <ViewLikesModal open={open} setOpen={setOpen} />
     </Flex>
   );
 };
-export default PostInfoSection;
+export default HomeScreenPostInfoSection;

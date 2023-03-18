@@ -26,7 +26,7 @@ const NavItem: React.FC<NavItemProps> = ({
         if (item.title === "Profile") {
           router.push(`/${user!.email!.split("@")[0]}`);
         } else if (item.title === "Home") {
-          router.push(`/`);
+          router.push(`/${user!.email!.split("@")[0]}/home`);
         }
       }}
       width="95%"

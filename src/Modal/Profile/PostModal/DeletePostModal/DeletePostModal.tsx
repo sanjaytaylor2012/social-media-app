@@ -29,7 +29,6 @@ import React, { useState } from "react";
 type DeletePostModalProps = {
   open: boolean;
   setOpen: (input: boolean) => void;
-  userDoc: UserType;
   item: Post;
   user: User | null | undefined;
 };
@@ -37,7 +36,6 @@ type DeletePostModalProps = {
 const DeletePostModal: React.FC<DeletePostModalProps> = ({
   open,
   setOpen,
-  userDoc,
   item,
   user,
 }) => {

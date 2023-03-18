@@ -36,7 +36,6 @@ import { query, collection, where, orderBy } from "firebase/firestore";
 import { firestore } from "@/firebase/clientApp";
 
 type ViewFollowingModalProps = {
-  userDoc: UserType;
   open: boolean;
   setOpen: (input: boolean) => void;
   item: Post;
@@ -46,13 +45,12 @@ const ViewFollowingModal: React.FC<ViewFollowingModalProps> = ({
   open,
   setOpen,
   item,
-  userDoc,
 }) => {
-  const { addComment, loading, onUnLike, onLike } = usePost(userDoc, item);
+  const { addComment, loading, onUnLike, onLike } = usePost(item);
   const [comment, setComment] = useState("");
   const [commentState, setCommentState] = useRecoilState(CommentState);
 
-  const messagesEndRef = useRef<null | HTMLElement>(null);
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
   const scrollToBottom = () => {
     !!messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -80,36 +78,37 @@ const ViewFollowingModal: React.FC<ViewFollowingModalProps> = ({
           <Flex width="100%">
             <Image
               objectFit="cover"
-              height="400px"
-              width="267px"
+              height="600px"
+              width="400px"
               src={item.imageURL}
             />
             <Stack width="100%" justify="space-between">
               <Stack ml={4} mt={4}>
-                <PostModalHeader userDoc={userDoc} item={item} />
+                <PostModalHeader item={item} />
 
-                {loading ? (
+                {/* {loading ? (
                   <ProfilePostLoader />
                 ) : (
                   <Stack height="30vh" overflowX="hidden" overflowY="auto">
                     {commentState.comments.map((comment: Comment) => {
                       return <CommentItem comment={comment} />;
                     })}
-                    <PostInfoSection
-                      onLike={onLike}
-                      onUnLike={onUnLike}
-                      item={item}
-                      loading={loading}
-                    />
                   </Stack>
-                )}
+                )} */}
 
-                {/* <Stack height="30vh" overflowX="hidden" overflowY="auto">
+                <Stack height="30vh" overflowX="hidden" overflowY="auto">
                   {commentState.comments.map((comment: any) => {
                     return <CommentItem comment={comment} />;
                   })}
                   <div ref={messagesEndRef} />
-                </Stack> */}
+                </Stack>
+
+                <PostInfoSection
+                  onLike={onLike}
+                  onUnLike={onUnLike}
+                  item={item}
+                  loading={loading}
+                />
               </Stack>
               <CommentInput
                 loading={loading}

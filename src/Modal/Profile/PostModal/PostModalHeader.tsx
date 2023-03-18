@@ -7,9 +7,9 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import { FiMenu } from "react-icons/fi";
 import DeletePostModal from "./DeletePostModal/DeletePostModal";
 
-type PostModalHeaderProps = { item: Post; userDoc: UserType };
+type PostModalHeaderProps = { item: Post };
 
-const PostModalHeader: React.FC<PostModalHeaderProps> = ({ item, userDoc }) => {
+const PostModalHeader: React.FC<PostModalHeaderProps> = ({ item }) => {
   const [open, setOpen] = useState(false);
   const [user] = useAuthState(auth);
 
@@ -21,13 +21,13 @@ const PostModalHeader: React.FC<PostModalHeaderProps> = ({ item, userDoc }) => {
             objectFit="cover"
             borderRadius="full"
             boxSize="40px"
-            src={userDoc.profilePic}
+            src={item.creatorProfilePic}
             mr={4}
           />
           <Text fontWeight="600">{item.creatorDisplayName}</Text>
         </Flex>
 
-        {userDoc.displayName === user!.email!.split("@")[0] && (
+        {item.creatorDisplayName === user!.email!.split("@")[0] && (
           <Icon
             as={FiMenu}
             mr={4}
@@ -44,7 +44,7 @@ const PostModalHeader: React.FC<PostModalHeaderProps> = ({ item, userDoc }) => {
           objectFit="cover"
           borderRadius="full"
           boxSize="40px"
-          src={userDoc.profilePic}
+          src={item.creatorProfilePic}
           mr={4}
         />
         <Text fontWeight="600" mr={3}>
@@ -52,13 +52,7 @@ const PostModalHeader: React.FC<PostModalHeaderProps> = ({ item, userDoc }) => {
         </Text>
         <Text>{item.body}</Text>
       </Flex>
-      <DeletePostModal
-        user={user}
-        item={item}
-        userDoc={userDoc}
-        open={open}
-        setOpen={setOpen}
-      />
+      <DeletePostModal user={user} item={item} open={open} setOpen={setOpen} />
     </>
   );
 };

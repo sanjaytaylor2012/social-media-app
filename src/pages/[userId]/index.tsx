@@ -3,7 +3,7 @@ import { Flex, Icon, Stack, Text } from "@chakra-ui/react";
 import { User } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import { GetServerSidePropsContext } from "next";
-import React, { useState } from "react";
+import React from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import safeJsonStringify from "safe-json-stringify";
 import { AiOutlineInstagram } from "react-icons/ai";
@@ -16,6 +16,7 @@ type indexProps = {
 };
 
 const ProfilePage: React.FC<indexProps> = ({ userDoc }) => {
+  console.log(userDoc);
   return (
     <>
       <Stack width="100%" ml={{ base: 0, md: 5 }} mb={5} mr={5}>
