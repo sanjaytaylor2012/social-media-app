@@ -103,7 +103,7 @@ const PostImage: React.FC<PostImageProps> = ({
       });
 
       await updateDoc(postDocRef, {
-        creatorProfilePic: userDoc.data().profilePic,
+        creatorProfilePic: userDoc!.data()!.profilePic,
       });
 
       const docRef = doc(firestore, `users/${user!.email!.split("@")[0]}`);
@@ -139,7 +139,7 @@ const PostImage: React.FC<PostImageProps> = ({
         });
 
         await updateDoc(newPostRef, {
-          creatorProfilePic: userDoc.data().profilePic,
+          creatorProfilePic: userDoc!.data()!.profilePic,
         });
       });
 

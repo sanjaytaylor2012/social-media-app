@@ -11,6 +11,8 @@ import NavMenu from "./NavMenu";
 const NavBar: React.FC = () => {
   return (
     <Stack
+      position="fixed"
+      top={0}
       border="1px solid"
       borderColor="gray.300"
       width={{ base: "50px", md: "245px" }}

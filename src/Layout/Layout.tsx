@@ -25,6 +25,12 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   //   }
   // }, [user]);
 
+  useEffect(() => {
+    if (user !== null) {
+      router.push(`/${user!.email!.split("@")[0]}/home`);
+    }
+  }, [user]);
+
   return (
     <>
       {user && (

@@ -85,9 +85,17 @@ const HomeScreenPostInfoSection: React.FC<HomeScreenPostInfoSectionProps> = ({
         </Text>
       )} */}
       <Flex>
-        <Text mr={2} fontWeight={600}>
-          {item.creatorDisplayName}
-        </Text>
+        <Flex>
+          <Text
+            sx={{ float: "left", shapeOutside: "circle(50%)" }}
+            width="auto"
+            mr={2}
+            fontWeight={600}
+          >
+            {item.creatorDisplayName}
+          </Text>
+        </Flex>
+
         <Text>{item.body}</Text>
       </Flex>
 

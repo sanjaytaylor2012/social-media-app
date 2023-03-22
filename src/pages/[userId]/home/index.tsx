@@ -2,6 +2,7 @@ import { homeScreenPostState, Post, postState } from "@/atoms/postAtom";
 import { FollowerStates, UserStates1, UserType } from "@/atoms/userAtom";
 import { auth, firestore } from "@/firebase/clientApp";
 import PostItem from "@/HomeScreen/PostItem";
+import SwitchAccountIcon from "@/HomeScreen/SwitchAccountIcon";
 import useProfile from "@/hooks/useProfile";
 import PageContent from "@/Layout/PageContent";
 import FollowButtonModal from "@/Modal/Profile/FollowersModal/FollowButtonModal";
@@ -35,6 +36,8 @@ const index: React.FC = ({}) => {
     useRecoilState(homeScreenPostState);
   const [user] = useAuthState(auth);
 
+  const [profilePicUser, setProfilePicUser] = useState("");
+
   const getPosts = async () => {
     try {
       // get posts from this community
@@ -55,6 +58,12 @@ const index: React.FC = ({}) => {
         ...prev,
         posts: posts as Post[],
       }));
+
+      const userDocRef = doc(firestore, `users/${user!.email!.split("@")[0]}`);
+
+      const userDoc = await getDoc(userDocRef);
+
+      setProfilePicUser(userDoc!.data()!.profilePic);
     } catch (error: any) {
       console.log(error.message);
     }
@@ -108,6 +117,7 @@ const index: React.FC = ({}) => {
           borderColor="gray.400"
           width="300px"
         >
+          <SwitchAccountIcon profilePic={profilePicUser} user={user} />
           <Text>Following</Text>
           {currentUserFollowerStateValue.myFollowings.map((item) => {
             return (

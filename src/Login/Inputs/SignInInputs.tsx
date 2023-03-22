@@ -1,8 +1,10 @@
 import { auth } from "@/firebase/clientApp";
 import { FIREBASE_ERRORS } from "@/firebase/errors";
-import { Input, Button, Text } from "@chakra-ui/react";
-import React, { useState } from "react";
+import { Input, Button, Text, useAccordion } from "@chakra-ui/react";
+import { useRouter } from "next/router";
+import React, { useEffect, useState } from "react";
 import {
+  useAuthState,
   useCreateUserWithEmailAndPassword,
   useSignInWithEmailAndPassword,
 } from "react-firebase-hooks/auth";
@@ -17,6 +19,11 @@ const Inputs: React.FC<InputsProps> = () => {
   const [signInWithEmailAndPassword, user, loading, error] =
     useSignInWithEmailAndPassword(auth);
 
+  const [user1] = useAuthState(auth);
+  const [showHome, setShowHome] = useState(false);
+
+  const router = useRouter();
+
   const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setLogin((prev) => ({
       ...prev,
@@ -26,8 +33,8 @@ const Inputs: React.FC<InputsProps> = () => {
 
   const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
     signInWithEmailAndPassword(login.username, login.password);
+    // router.push(`/${user1!.email!.split("@")[0]}/home`);
   };
 
   return (

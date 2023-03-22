@@ -63,7 +63,7 @@ const Posts: React.FC<PostsProps> = ({ userDoc }) => {
       setPostStateValue((prev) => ({
         ...prev,
         posts: posts as Post[],
-        numPosts: userDocument.data().numPosts,
+        numPosts: userDocument!.data()!.numPosts,
       }));
     } catch (error: any) {
       console.log("getPosts error: ", error.message);
