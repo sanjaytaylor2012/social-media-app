@@ -22,47 +22,44 @@ import PageContent from "@/Layout/PageContent";
 import { Post, postState } from "@/atoms/postAtom";
 import { useRecoilState } from "recoil";
 import GridPostItem from "@/Profile/GridPostItem";
+import PostLoader from "@/Profile/ProfilePostLoader";
 
 const inter = Inter({ subsets: ["latin"] });
 
-type HomeProps = {
-  userDoc: UserType;
-};
+const Home: React.FC = () => {
+  // const [user] = useAuthState(auth);
+  // const [loading, setLoading] = useState(false);
+  // const [postStateValue, setPostStateValue] = useRecoilState(postState);
 
-const Home: React.FC<HomeProps> = ({ userDoc }) => {
-  const [user] = useAuthState(auth);
-  const [loading, setLoading] = useState(false);
-  const [postStateValue, setPostStateValue] = useRecoilState(postState);
+  // const getPosts = async () => {
+  //   try {
+  //     setLoading(true);
+  //     // get posts from this community
+  //     const postsQuery = query(
+  //       collection(firestore, `users/${userDoc.displayName}/posts`),
+  //       orderBy("createdAt", "desc")
+  //     );
 
-  const getPosts = async () => {
-    try {
-      setLoading(true);
-      // get posts from this community
-      const postsQuery = query(
-        collection(firestore, `users/${userDoc.displayName}/posts`),
-        orderBy("createdAt", "desc")
-      );
+  //     const postDocs = await getDocs(postsQuery);
 
-      const postDocs = await getDocs(postsQuery);
+  //     //store in post state
+  //     const posts = postDocs.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+  //     // console.log(posts);
+  //     setPostStateValue((prev) => ({
+  //       ...prev,
+  //       posts: posts as Post[],
+  //     }));
+  //   } catch (error: any) {
+  //     console.log("getPosts error: ", error.message);
+  //   }
+  //   setLoading(false);
+  // };
 
-      //store in post state
-      const posts = postDocs.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-      // console.log(posts);
-      setPostStateValue((prev) => ({
-        ...prev,
-        posts: posts as Post[],
-      }));
-    } catch (error: any) {
-      console.log("getPosts error: ", error.message);
-    }
-    setLoading(false);
-  };
-
-  useEffect(() => {
-    if (userDoc.displayName != user!.email!.split("@")[0]) {
-      router.push(`/`);
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (userDoc.displayName != user!.email!.split("@")[0]) {
+  //     router.push(`/`);
+  //   }
+  // }, []);
 
   return (
     // <PageContent>
@@ -73,33 +70,34 @@ const Home: React.FC<HomeProps> = ({ userDoc }) => {
     //   </>
     //   <></>
     // </PageContent>
-    <h1>hi</h1>
+    // <h1>hi</h1>
+    <PostLoader />
   );
 };
 
-export async function getServerSideProps() {
-  const user = auth.currentUser;
-  console.log("user", user);
+// export async function getServerSideProps() {
+//   const user = auth.currentUser;
+//   console.log("user", user);
 
-  try {
-    const userDocRef = doc(firestore, `users/${user?.displayName}`);
-    const userDoc = await getDoc(userDocRef);
-    console.log(userDoc.data());
+//   try {
+//     const userDocRef = doc(firestore, `users/${user?.displayName}`);
+//     const userDoc = await getDoc(userDocRef);
+//     console.log(userDoc.data());
 
-    return {
-      props: {
-        userDoc: userDoc.exists()
-          ? JSON.parse(
-              safeJsonStringify({
-                ...userDoc.data(),
-              })
-            )
-          : "",
-      },
-    };
-  } catch (error) {
-    console.log("getServerSideProps error", error);
-  }
-}
+//     return {
+//       props: {
+//         userDoc: userDoc.exists()
+//           ? JSON.parse(
+//               safeJsonStringify({
+//                 ...userDoc.data(),
+//               })
+//             )
+//           : "",
+//       },
+//     };
+//   } catch (error) {
+//     console.log("getServerSideProps error", error);
+//   }
+// }
 
 export default Home;

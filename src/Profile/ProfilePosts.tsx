@@ -14,7 +14,14 @@ import {
   Box,
   Tooltip,
 } from "@chakra-ui/react";
-import { query, collection, orderBy, getDocs } from "firebase/firestore";
+import {
+  query,
+  collection,
+  orderBy,
+  getDocs,
+  doc,
+  getDoc,
+} from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { BsGrid3X3 } from "react-icons/bs";
@@ -48,9 +55,15 @@ const Posts: React.FC<PostsProps> = ({ userDoc }) => {
       //store in post state
       const posts = postDocs.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
       // console.log(posts);
+
+      const userDocument = await getDoc(
+        doc(firestore, `users/${userDoc.displayName}`)
+      );
+
       setPostStateValue((prev) => ({
         ...prev,
         posts: posts as Post[],
+        numPosts: userDocument.data().numPosts,
       }));
     } catch (error: any) {
       console.log("getPosts error: ", error.message);
@@ -60,7 +73,7 @@ const Posts: React.FC<PostsProps> = ({ userDoc }) => {
 
   useEffect(() => {
     getPosts();
-  }, []);
+  }, [userDoc]);
 
   return (
     <Stack align="center" mr={5}>

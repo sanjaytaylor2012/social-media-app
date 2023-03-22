@@ -38,7 +38,7 @@ const index: React.FC<indexProps> = ({ userDoc }) => {
 
   useEffect(() => {
     if (userDoc.displayName != user!.email!.split("@")[0]) {
-      router.push(`/`);
+      router.push(`/${user!.email!.split("@")[0]}/home`);
     }
   }, []);
 

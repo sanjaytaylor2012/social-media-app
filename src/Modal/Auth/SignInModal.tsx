@@ -2,8 +2,10 @@ import { auth } from "@/firebase/clientApp";
 import { FIREBASE_ERRORS } from "@/firebase/errors";
 import { Input, Button, Text } from "@chakra-ui/react";
 import { signOut } from "firebase/auth";
+import { useRouter } from "next/router";
 import React, { useState } from "react";
 import {
+  useAuthState,
   useCreateUserWithEmailAndPassword,
   useSignInWithEmailAndPassword,
 } from "react-firebase-hooks/auth";
@@ -24,6 +26,9 @@ const Inputs: React.FC<InputsProps> = ({ handleClose }) => {
       [event.target.name]: event.target.value,
     }));
   };
+
+  const router = useRouter();
+  const [user1] = useAuthState(auth);
 
   const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();

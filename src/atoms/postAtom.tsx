@@ -16,12 +16,13 @@ export type Post = {
 interface PostState {
   selectedPost: Post | null;
   posts: Post[];
-  // postVotes?
+  numPosts: number;
 }
 
 const defaultPostState: PostState = {
   selectedPost: null,
   posts: [],
+  numPosts: 0,
 };
 
 export const postState = atom({
@@ -63,4 +64,33 @@ const defaultCommentState: CommentState = {
 export const CommentState = atom({
   key: "CommentState",
   default: defaultCommentState,
+});
+
+export type HomeScreenPost = {
+  id?: string | undefined;
+  creatorId: string;
+  creatorDisplayName: string;
+  body: string;
+  numberOfComments: number;
+  imageURL?: string;
+  createdAt: Timestamp;
+  creatorProfilePic?: string;
+  likes: number;
+  likeProfiles: Like[];
+};
+
+interface HomePostState {
+  selectedPost: Post | null;
+  posts: Post[];
+  // postVotes?
+}
+
+const defaultHomePostState: HomePostState = {
+  selectedPost: null,
+  posts: [],
+};
+
+export const homeScreenPostState = atom({
+  key: "postState",
+  default: defaultHomePostState,
 });

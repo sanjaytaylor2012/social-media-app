@@ -24,13 +24,20 @@ import {
   collection,
   doc,
   getDoc,
+  getDocs,
   increment,
+  query,
   serverTimestamp,
+  setDoc,
   Timestamp,
   updateDoc,
+  writeBatch,
 } from "firebase/firestore";
 import { getDownloadURL, ref, uploadString } from "firebase/storage";
 import { useRouter } from "next/router";
+import { v4 as uuidv4 } from "uuid";
+import { randomUUID } from "crypto";
+
 type PostImageProps = {
   setSelectedModal: (input: string) => void;
   setSelectedTab: (input: string) => void;
@@ -56,6 +63,8 @@ const PostImage: React.FC<PostImageProps> = ({
       return;
     }
 
+    const id = uuidv4();
+
     const newPost: Post = {
       creatorId: user!.uid,
       creatorDisplayName: user!.email!.split("@")[0],
@@ -63,16 +72,29 @@ const PostImage: React.FC<PostImageProps> = ({
       numberOfComments: 0,
       createdAt: serverTimestamp() as Timestamp,
       likes: 0,
+      id: id,
     };
 
     try {
       setLoading(true);
-      const postDocRef = await addDoc(
-        collection(firestore, `users/${user!.email!.split("@")[0]}/posts`),
-        newPost
+
+      const batch = writeBatch(firestore);
+
+      const userDoc = await getDoc(
+        doc(firestore, `users/${user!.email!.split("@")[0]}`)
       );
 
-      const imageRef = ref(storage, `posts/${postDocRef.id}/image`);
+      console.log(userDoc.data());
+
+      const postDocRef = doc(
+        firestore,
+        `users/${user!.email!.split("@")[0]}/posts/${id}`
+      );
+      batch.set(postDocRef, newPost);
+
+      await batch.commit();
+
+      const imageRef = ref(storage, `posts/${id}/image`);
       await uploadString(imageRef, selectedFile, "data_url");
       const downloadURL = await getDownloadURL(imageRef);
 
@@ -80,11 +102,51 @@ const PostImage: React.FC<PostImageProps> = ({
         imageURL: downloadURL,
       });
 
+      await updateDoc(postDocRef, {
+        creatorProfilePic: userDoc.data().profilePic,
+      });
+
       const docRef = doc(firestore, `users/${user!.email!.split("@")[0]}`);
 
       await updateDoc(docRef, {
         numPosts: increment(1),
       });
+
+      //updating follower home screens with new post
+
+      const userFollowsRef = collection(
+        firestore,
+        `users/${user!.email!.split("@")[0]}/followerProfiles`
+      );
+
+      const userFollows = await getDocs(userFollowsRef);
+
+      const userFollowDocs = userFollows.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+
+      userFollowDocs.forEach(async (item) => {
+        const newPostRef = doc(
+          firestore,
+          `users/${item.id}/homeScreenPosts/${id}`
+        );
+
+        await setDoc(newPostRef, newPost);
+
+        await updateDoc(newPostRef, {
+          imageURL: downloadURL,
+        });
+
+        await updateDoc(newPostRef, {
+          creatorProfilePic: userDoc.data().profilePic,
+        });
+      });
+
+      // setCurrentPostState((prev) => ({
+      //   ...prev,
+      //   posts: [...prev.posts, userPostDocs[1] as Post],
+      // }));
 
       router.reload();
     } catch (error: any) {

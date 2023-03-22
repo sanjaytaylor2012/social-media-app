@@ -56,9 +56,9 @@ const ViewFollowingModal: React.FC<ViewFollowingModalProps> = ({
     !!messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
-  useEffect(() => {
-    scrollToBottom();
-  }, [commentState.comments]);
+  // useEffect(() => {
+  //   scrollToBottom();
+  // }, [commentState.comments]);
 
   const handleAddComment = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -96,9 +96,9 @@ const ViewFollowingModal: React.FC<ViewFollowingModalProps> = ({
                   </Stack>
                 )} */}
 
-                <Stack height="30vh" overflowX="hidden" overflowY="auto">
+                <Stack height="100%" overflowX="hidden" overflowY="auto">
                   {commentState.comments.map((comment: any) => {
-                    return <CommentItem comment={comment} />;
+                    return <CommentItem key={comment.id} comment={comment} />;
                   })}
                   <div ref={messagesEndRef} />
                 </Stack>

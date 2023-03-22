@@ -1,4 +1,4 @@
-import { postState } from "@/atoms/postAtom";
+import { Post, postState } from "@/atoms/postAtom";
 import {
   FollowerStates,
   followProfile,
@@ -14,13 +14,15 @@ import {
   doc,
   increment,
   getDoc,
+  orderBy,
+  query,
 } from "firebase/firestore";
 import { ref } from "firebase/storage";
 import React, { useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useRecoilState } from "recoil";
 
-const useProfile = (userDoc: UserType) => {
+const useProfile = (userDoc?: UserType) => {
   const [user] = useAuthState(auth);
 
   const [followerStateValue, setFollowerStateValue] =
@@ -37,7 +39,10 @@ const useProfile = (userDoc: UserType) => {
   const getCurrentFollows = async () => {
     try {
       const profilesDocs = await getDocs(
-        collection(firestore, `users/${userDoc.displayName}/followingProfiles/`)
+        collection(
+          firestore,
+          `users/${userDoc?.displayName}/followingProfiles/`
+        )
       );
 
       const snippets = profilesDocs.docs.map((doc) => ({ ...doc.data() }));
@@ -77,7 +82,7 @@ const useProfile = (userDoc: UserType) => {
   const getMyFollowers = async () => {
     try {
       const profilesDocs = await getDocs(
-        collection(firestore, `users/${userDoc.displayName}/followerProfiles/`)
+        collection(firestore, `users/${userDoc?.displayName}/followerProfiles/`)
       );
 
       const snippets = profilesDocs.docs.map((doc) => ({ ...doc.data() }));
@@ -97,7 +102,7 @@ const useProfile = (userDoc: UserType) => {
     getCurrentFollows();
     getMyFollowers();
     getMyFollows();
-  }, [userDoc]);
+  }, []);
 
   const unFollow = async (displayName: string) => {
     try {
@@ -114,7 +119,7 @@ const useProfile = (userDoc: UserType) => {
       batch.delete(
         doc(
           firestore,
-          `users/${userDoc.displayName}/followerProfiles/`,
+          `users/${userDoc?.displayName}/followerProfiles/`,
           user!.email!.split("@")[0]
         )
       );
@@ -229,7 +234,7 @@ const useProfile = (userDoc: UserType) => {
       const batch = writeBatch(firestore);
       const newSnippet: followProfile = {
         name: displayName,
-        profilePic: userDoc.profilePic,
+        profilePic: userDoc?.profilePic,
       };
 
       const profilePicRef = doc(
@@ -248,7 +253,7 @@ const useProfile = (userDoc: UserType) => {
       batch.set(
         doc(
           firestore,
-          `users/${userDoc.displayName}/followerProfiles/`,
+          `users/${userDoc?.displayName}/followerProfiles/`,
           user!.email!.split("@")[0]
         ),
         newFollowerSnippet
@@ -266,7 +271,7 @@ const useProfile = (userDoc: UserType) => {
       batch.set(
         doc(
           firestore,
-          `users/${userDoc.displayName}/followerProfiles/`,
+          `users/${userDoc?.displayName}/followerProfiles/`,
           user!.email!.split("@")[0]
         ),
         newFollowerSnippet
@@ -336,6 +341,7 @@ const useProfile = (userDoc: UserType) => {
     myFollowersStateValue,
     removeFollower,
     currentUserFollowerStateValue,
+    getMyFollows,
   };
 };
 

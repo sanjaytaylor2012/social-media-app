@@ -1,4 +1,5 @@
 import { followProfile, UserStates, UserType } from "@/atoms/userAtom";
+import { auth } from "@/firebase/clientApp";
 import useProfile from "@/hooks/useProfile";
 import FollowButton from "@/Profile/FollowButton";
 import {
@@ -16,7 +17,10 @@ import {
   Button,
   Image,
 } from "@chakra-ui/react";
+import { useRouter } from "next/router";
 import React from "react";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { AiOutlineInstagram } from "react-icons/ai";
 import { MdAddToPhotos } from "react-icons/md";
 import FollowButtonModal from "./FollowButtonModal";
 
@@ -32,6 +36,8 @@ const ViewFollowingModal: React.FC<ViewFollowingModalProps> = ({
   userDoc,
 }) => {
   const { myFollowersStateValue } = useProfile(userDoc);
+  const [user] = useAuthState(auth);
+  const router = useRouter();
 
   return (
     <Modal isOpen={openFollowers} onClose={() => setOpenFollowers(false)}>
@@ -52,19 +58,36 @@ const ViewFollowingModal: React.FC<ViewFollowingModalProps> = ({
               return (
                 <Flex width="100%" key={item.name} justify="space-between">
                   <Flex>
-                    <Image
-                      objectFit="cover"
-                      borderRadius="full"
-                      boxSize="40px"
-                      src={item.profilePic}
-                      mr={2}
-                    />
+                    {item.profilePic === "" ? (
+                      <Icon fontSize={29} as={AiOutlineInstagram} mr={2} />
+                    ) : (
+                      <Image
+                        objectFit="cover"
+                        borderRadius="full"
+                        boxSize="40px"
+                        src={item.profilePic}
+                        mr={2}
+                      />
+                    )}
                     {item.name}
                   </Flex>
-                  <FollowButtonModal
-                    displayName={item.name}
-                    userDoc={userDoc}
-                  />
+                  {userDoc.displayName === user!.email!.split("@")[0] ? (
+                    <FollowButtonModal
+                      displayName={item.name}
+                      userDoc={userDoc}
+                    />
+                  ) : (
+                    <Button
+                      variant="login"
+                      height="30px"
+                      onClick={() => {
+                        router.push(`/${item.name}`);
+                        setOpenFollowers(false);
+                      }}
+                    >
+                      View Profile
+                    </Button>
+                  )}
                 </Flex>
               );
             })}

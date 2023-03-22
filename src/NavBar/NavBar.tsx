@@ -22,7 +22,7 @@ const NavBar: React.FC = () => {
         src="/images/Instagram_logo.svg.png"
         height="auto"
         mt={9}
-        width={{ base: "0%", md: "50%" }}
+        width={{ base: "0%", md: "70%" }}
       />
       <NavItems />
       <NavMenu />

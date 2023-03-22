@@ -1,5 +1,6 @@
 import { CommentState, Post } from "@/atoms/postAtom";
 import { auth } from "@/firebase/clientApp";
+import PostModal from "@/Modal/Profile/PostModal/PostModal";
 import ViewLikesModal from "@/Modal/Profile/PostModal/ViewLikesModal";
 import { Flex, Divider, Icon, Text } from "@chakra-ui/react";
 import moment from "moment";
@@ -15,7 +16,6 @@ type HomeScreenPostInfoSectionProps = {
   onLike: (postId: string) => Promise<void>;
   onUnLike: (postId: string) => Promise<void>;
   loading: boolean;
-  setPostModalOpen: (input: boolean) => void;
   getComments: (input: string) => Promise<void>;
 };
 
@@ -24,7 +24,6 @@ const HomeScreenPostInfoSection: React.FC<HomeScreenPostInfoSectionProps> = ({
   onLike,
   onUnLike,
   loading,
-  setPostModalOpen,
   getComments,
 }) => {
   const [currentCommentState, setCurrentCommentState] =
@@ -34,37 +33,42 @@ const HomeScreenPostInfoSection: React.FC<HomeScreenPostInfoSectionProps> = ({
 
   const [open, setOpen] = useState(false);
 
+  const [openPostModal, setOpenPostModal] = useState(false);
+
   const isLiked = !!currentCommentState.profileLikes.find(
     (item) => item.name === user!.email!.split("@")[0]
   );
 
   return (
     <Flex direction="column">
-      <Divider width="100%" color="gray.300" border="1px solid" />
+      <Divider width="400px" color="gray.300" border="1px solid" />
       <Flex>
-        {isLiked ? (
-          <Icon
-            cursor="pointer"
-            fontSize={30}
-            color="red.500"
-            as={AiFillHeart}
-            mr={4}
-            onClick={() => onUnLike(item.id as string)}
-          />
-        ) : (
-          <Icon
-            cursor="pointer"
-            mr={4}
-            fontSize={30}
-            as={AiOutlineHeart}
-            onClick={() => onLike(item.id as string)}
-          />
-        )}
+        <Icon
+          cursor="pointer"
+          fontSize={30}
+          color="black"
+          as={AiFillHeart}
+          mr={4}
+          onClick={() => {
+            getComments(item.creatorDisplayName);
+            setOpenPostModal(true);
+          }}
+        />
 
-        <Icon mb={2} fontSize={30} as={TbMessageCircle2} />
+        <Icon
+          cursor="pointer"
+          mb={2}
+          fontSize={30}
+          as={TbMessageCircle2}
+          _hover={{ color: "gray.300" }}
+          onClick={() => {
+            getComments(item.creatorDisplayName);
+            setOpenPostModal(true);
+          }}
+        />
       </Flex>
 
-      {currentCommentState.likes === 1 && (
+      {/* {currentCommentState.likes === 1 && (
         <Text fontWeight={600} cursor="pointer" _hover={{ color: "gray.300" }}>
           Liked by {currentCommentState.profileLikes[0].name}
         </Text>
@@ -79,22 +83,27 @@ const HomeScreenPostInfoSection: React.FC<HomeScreenPostInfoSectionProps> = ({
           Liked by {currentCommentState.profileLikes[0].name} and{" "}
           {currentCommentState.likes - 1} others
         </Text>
-      )}
-
-      {currentCommentState.comments.length > 2 && (
-        <Text
-          cursor="pointer"
-          _hover={{ color: "gray.300" }}
-          onClick={() => {
-            getComments(item.creatorDisplayName);
-            setPostModalOpen(true);
-          }}
-        >
-          View all {currentCommentState.comments.length} comments
+      )} */}
+      <Flex>
+        <Text mr={2} fontWeight={600}>
+          {item.creatorDisplayName}
         </Text>
-      )}
+        <Text>{item.body}</Text>
+      </Flex>
+
+      <Text
+        cursor="pointer"
+        _hover={{ color: "gray.300" }}
+        onClick={() => {
+          getComments(item.creatorDisplayName);
+          setOpenPostModal(true);
+        }}
+      >
+        View all comments
+      </Text>
 
       <ViewLikesModal open={open} setOpen={setOpen} />
+      <PostModal item={item} open={openPostModal} setOpen={setOpenPostModal} />
     </Flex>
   );
 };

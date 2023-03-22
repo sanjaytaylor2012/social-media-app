@@ -13,12 +13,11 @@ import PostHeader from "./PostHeader";
 type PostItemProps = { item: Post };
 
 const PostItem: React.FC<PostItemProps> = ({ item }) => {
-  const [open, setOpen] = useState(false);
   const { getComments, setLoading } = usePost(item);
   const { onLike, onUnLike, loading } = usePost(item);
 
   return (
-    <>
+    <Stack mb={10} width="100%">
       <PostHeader item={item} />
       <Image
         onClick={() => {
@@ -27,20 +26,19 @@ const PostItem: React.FC<PostItemProps> = ({ item }) => {
         }}
         objectFit="cover"
         src={item.imageURL}
-        width="300px"
-        height="300px"
+        width="400px"
+        height="500px"
+        // width={{ base: "40%", md: "70%" }}
+        // height={{ base: "70%", md: "90%" }}
       />
       <HomeScreenPostInfoSection
-        getComments={getComments(item.creatorDisplayName)}
-        setPostModalOpen={setOpen}
+        getComments={getComments}
         item={item}
         loading={loading}
         onLike={onLike}
         onUnLike={onUnLike}
       />
-
-      <PostModal item={item} open={open} setOpen={setOpen} />
-    </>
+    </Stack>
   );
 };
 export default PostItem;

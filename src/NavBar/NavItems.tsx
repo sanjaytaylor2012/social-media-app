@@ -37,26 +37,26 @@ const formTabs: formTab[] = [
     iconFilled: BiSearch,
     iconUnfilled: CiSearch,
   },
-  {
-    title: "Explore",
-    iconFilled: MdExplore,
-    iconUnfilled: MdOutlineExplore,
-  },
-  {
-    title: "Reels",
-    iconFilled: BsCameraReelsFill,
-    iconUnfilled: BsCameraReels,
-  },
-  {
-    title: "Messages",
-    iconFilled: AiFillMessage,
-    iconUnfilled: AiOutlineMessage,
-  },
-  {
-    title: "Notifications",
-    iconFilled: AiFillHeart,
-    iconUnfilled: AiOutlineHeart,
-  },
+  // {
+  //   title: "Explore",
+  //   iconFilled: MdExplore,
+  //   iconUnfilled: MdOutlineExplore,
+  // },
+  // {
+  //   title: "Reels",
+  //   iconFilled: BsCameraReelsFill,
+  //   iconUnfilled: BsCameraReels,
+  // },
+  // {
+  //   title: "Messages",
+  //   iconFilled: AiFillMessage,
+  //   iconUnfilled: AiOutlineMessage,
+  // },
+  // {
+  //   title: "Notifications",
+  //   iconFilled: AiFillHeart,
+  //   iconUnfilled: AiOutlineHeart,
+  // },
   {
     title: "Create",
     iconFilled: AiFillPlusSquare,

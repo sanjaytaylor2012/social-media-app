@@ -46,6 +46,7 @@ const ViewFollowingModal: React.FC<ViewFollowingModalProps> = ({
             {followerStateValue.myFollowings.map((item) => {
               return (
                 <FollowingProfileItem
+                  setOpen={setOpen}
                   key={item.name}
                   item={item}
                   userDoc={userDoc}

@@ -10,6 +10,8 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import { AiOutlineInstagram } from "react-icons/ai";
 import FollowButton from "./FollowButton";
 import { v4 as uuidv4 } from "uuid";
+import { postState } from "@/atoms/postAtom";
+import { useRecoilState } from "recoil";
 
 type HeaderProps = { userDoc: UserType };
 
@@ -19,6 +21,7 @@ const Header: React.FC<HeaderProps> = ({ userDoc }) => {
   const [open, setOpen] = useState(false);
   const [openFollowers, setOpenFollowers] = useState(false);
   const { followerStateValue, myFollowersStateValue } = useProfile(userDoc);
+  const [postStateValue, setPostStateValue] = useRecoilState(postState);
 
   // useEffect(() => {
   //   console.log("user.DisplayName", user!.email!.split("@")[0]);
@@ -65,56 +68,36 @@ const Header: React.FC<HeaderProps> = ({ userDoc }) => {
         <Flex>
           <Flex mr={6}>
             <Text fontWeight={600} mr={2}>
-              {userDoc.numPosts}
+              {postStateValue.numPosts}
             </Text>
             <Text> posts</Text>
           </Flex>
 
-          {user!.email!.split("@")[0] === userDoc.displayName ? (
-            <Flex
-              mr={6}
-              _hover={{ color: "gray.400" }}
-              onClick={() => setOpenFollowers(true)}
-              cursor="pointer"
-            >
-              <Text fontWeight={600} mr={2}>
-                {myFollowersStateValue.totalFollowers}
-              </Text>
+          <Flex
+            mr={6}
+            _hover={{ color: "gray.400" }}
+            onClick={() => setOpenFollowers(true)}
+            cursor="pointer"
+          >
+            <Text fontWeight={600} mr={2}>
+              {myFollowersStateValue.totalFollowers}
+            </Text>
 
-              <Text> followers</Text>
-            </Flex>
-          ) : (
-            <Flex mr={6}>
-              <Text fontWeight={600} mr={2}>
-                {myFollowersStateValue.totalFollowers}
-              </Text>
+            <Text> followers</Text>
+          </Flex>
 
-              <Text> followers</Text>
-            </Flex>
-          )}
+          <Flex
+            _hover={{ color: "gray.400" }}
+            cursor="pointer"
+            mr={6}
+            onClick={() => setOpen(true)}
+          >
+            <Text fontWeight={600} mr={2}>
+              {followerStateValue.totalFollowings}
+            </Text>
 
-          {user!.email!.split("@")[0] === userDoc.displayName ? (
-            <Flex
-              _hover={{ color: "gray.400" }}
-              cursor="pointer"
-              mr={6}
-              onClick={() => setOpen(true)}
-            >
-              <Text fontWeight={600} mr={2}>
-                {followerStateValue.totalFollowings}
-              </Text>
-
-              <Text> following</Text>
-            </Flex>
-          ) : (
-            <Flex mr={6}>
-              <Text fontWeight={600} mr={2}>
-                {followerStateValue.totalFollowings}
-              </Text>
-
-              <Text> following</Text>
-            </Flex>
-          )}
+            <Text> following</Text>
+          </Flex>
         </Flex>
         {userDoc.bio === "" ? (
           <Text mt={4}>{userDoc.displayName}</Text>

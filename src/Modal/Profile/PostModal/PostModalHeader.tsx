@@ -4,6 +4,7 @@ import { auth } from "@/firebase/clientApp";
 import { Flex, Stack, Divider, Image, Text, Icon } from "@chakra-ui/react";
 import React, { useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
+import { AiOutlineInstagram } from "react-icons/ai";
 import { FiMenu } from "react-icons/fi";
 import DeletePostModal from "./DeletePostModal/DeletePostModal";
 
@@ -17,13 +18,17 @@ const PostModalHeader: React.FC<PostModalHeaderProps> = ({ item }) => {
     <>
       <Flex align="center" justify="space-between">
         <Flex align="center">
-          <Image
-            objectFit="cover"
-            borderRadius="full"
-            boxSize="40px"
-            src={item.creatorProfilePic}
-            mr={4}
-          />
+          {item.creatorProfilePic === undefined ? (
+            <Icon fontSize={40} mr={1} as={AiOutlineInstagram} />
+          ) : (
+            <Image
+              objectFit="cover"
+              borderRadius="full"
+              boxSize="40px"
+              src={item.creatorProfilePic}
+              mr={1}
+            />
+          )}
           <Text fontWeight="600">{item.creatorDisplayName}</Text>
         </Flex>
 
@@ -39,18 +44,12 @@ const PostModalHeader: React.FC<PostModalHeaderProps> = ({ item }) => {
         )}
       </Flex>
       <Divider width="100%" color="gray.300" border="1px solid" />
-      <Flex align="center">
-        <Image
-          objectFit="cover"
-          borderRadius="full"
-          boxSize="40px"
-          src={item.creatorProfilePic}
-          mr={4}
-        />
+      <Flex align="top">
         <Text fontWeight="600" mr={3}>
           {item.creatorDisplayName}
         </Text>
-        <Text>{item.body}</Text>
+
+        <Text mr={2}>{item.body}</Text>
       </Flex>
       <DeletePostModal user={user} item={item} open={open} setOpen={setOpen} />
     </>

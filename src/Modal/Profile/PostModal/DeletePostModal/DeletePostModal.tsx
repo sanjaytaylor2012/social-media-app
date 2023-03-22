@@ -1,4 +1,4 @@
-import { Post } from "@/atoms/postAtom";
+import { Post, postState } from "@/atoms/postAtom";
 import { UserType } from "@/atoms/userAtom";
 import { firestore, storage } from "@/firebase/clientApp";
 import useProfile from "@/hooks/useProfile";
@@ -25,6 +25,7 @@ import {
 import { deleteObject, ref } from "firebase/storage";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
+import { useRecoilState } from "recoil";
 
 type DeletePostModalProps = {
   open: boolean;
@@ -41,12 +42,14 @@ const DeletePostModal: React.FC<DeletePostModalProps> = ({
 }) => {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const [postStateValue, setPostStateValue] = useRecoilState(postState);
 
   const handleDeletePost = async () => {
     try {
       setLoading(true);
       const batch = writeBatch(firestore);
 
+      console.log(item.id);
       batch.delete(
         doc(firestore, `users/${user!.email!.split("@")[0]}/posts/${item.id}`)
       );
@@ -59,8 +62,15 @@ const DeletePostModal: React.FC<DeletePostModalProps> = ({
         numPosts: increment(-1),
       });
 
+      setPostStateValue((prev) => ({
+        ...prev,
+        posts: prev.posts.filter((currentItem) => currentItem.id !== item.id),
+        numPosts: prev.posts.length - 1,
+      }));
+
       batch.commit();
-      router.reload();
+
+      setOpen(false);
     } catch (error: any) {
       console.log("handleCreatePost error: ", error.message);
     }

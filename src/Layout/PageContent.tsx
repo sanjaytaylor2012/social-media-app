@@ -7,7 +7,7 @@ interface PageContentProps {
 
 const PageContent: React.FC<PageContentProps> = ({ children }) => {
   return (
-    <Flex justify="center" p="16px 0px">
+    <Flex ml={20} mt={10} p="16px 0px">
       <Flex width="95%" justify="center" maxWidth="860px">
         {/* LHS */}
         <Flex

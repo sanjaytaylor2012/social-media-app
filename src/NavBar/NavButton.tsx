@@ -24,8 +24,10 @@ const NavItem: React.FC<NavItemProps> = ({
       onClick={() => {
         setSelectedTab(item.title);
         if (item.title === "Profile") {
+          // router.reload();
           router.push(`/${user!.email!.split("@")[0]}`);
         } else if (item.title === "Home") {
+          // router.reload();
           router.push(`/${user!.email!.split("@")[0]}/home`);
         }
       }}

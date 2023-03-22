@@ -21,15 +21,15 @@ const PostHeader: React.FC<PostHeaderProps> = ({ item }) => {
     <>
       <Flex align="center" justify="space-between">
         <Flex align="center">
-          {item.creatorProfilePic === "" ? (
+          {item.creatorProfilePic === undefined ? (
             <Icon fontSize={30} mr={1} as={AiOutlineInstagram} />
           ) : (
             <Image
               objectFit="cover"
               borderRadius="full"
-              boxSize="75px"
+              boxSize="40px"
               src={item.creatorProfilePic}
-              mr={1}
+              mr={2}
             />
           )}
           <Text fontWeight="600" mr={2}>
@@ -40,7 +40,7 @@ const PostHeader: React.FC<PostHeaderProps> = ({ item }) => {
           </Text>
         </Flex>
       </Flex>
-      <Divider width="100%" color="gray.300" border="1px solid" />
+      <Divider width="400px" color="gray.300" border="1px solid" />
     </>
   );
 };
