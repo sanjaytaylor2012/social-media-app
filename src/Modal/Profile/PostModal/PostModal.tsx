@@ -98,7 +98,13 @@ const ViewFollowingModal: React.FC<ViewFollowingModalProps> = ({
 
                 <Stack height="100%" overflowX="hidden" overflowY="auto">
                   {commentState.comments.map((comment: any) => {
-                    return <CommentItem key={comment.id} comment={comment} />;
+                    return (
+                      <CommentItem
+                        post={item}
+                        key={comment.id}
+                        comment={comment}
+                      />
+                    );
                   })}
                   <div ref={messagesEndRef} />
                 </Stack>
