@@ -1,5 +1,5 @@
 import { followProfile, UserType } from "@/atoms/userAtom";
-import ProfilePic from "@/CommonlyUsed/profilePic";
+import ProfilePic from "@/CommonlyUsed/ProfilePic";
 import { Flex, Icon, Button, Text } from "@chakra-ui/react";
 import { User } from "firebase/auth";
 import router from "next/router";
