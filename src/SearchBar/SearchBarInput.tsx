@@ -3,7 +3,6 @@ import {
   CrossCheckPostState,
 } from "@/atoms/SearchBarInputAtom";
 import { UserType } from "@/atoms/userAtom";
-import ProfilePic from "@/CommonlyUsed/profilePic";
 import { firestore } from "@/firebase/clientApp";
 import ProfilePage from "@/pages/[userId]";
 import {
@@ -68,6 +67,11 @@ const SearchBarInput: React.FC<SearchBarInputProps> = ({ onClose }) => {
   const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.value != "") {
       crossCheckUsers(event.target.value);
+    } else {
+      setCrossCheckPostState((prev) => ({
+        ...prev,
+        users: [],
+      }));
     }
   };
 
