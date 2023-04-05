@@ -2,6 +2,7 @@ import { UserType } from "@/atoms/userAtom";
 import { auth } from "@/firebase/clientApp";
 import useProfile from "@/hooks/useProfile";
 import { Button } from "@chakra-ui/react";
+import { get } from "http";
 import React, { useEffect } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 
@@ -14,13 +15,13 @@ const FollowButton: React.FC<FollowButtonProps> = ({
   userDoc,
   displayName,
 }) => {
-  const {
-    currentProfileState,
-
-    onFollowUnFollow,
-    loading,
-  } = useProfile(userDoc);
+  const { currentProfileState, onFollowUnFollow, loading, getMyFollows } =
+    useProfile(userDoc);
   const [user] = useAuthState(auth);
+
+  useEffect(() => {
+    getMyFollows();
+  }, []);
 
   //   useEffect(() => {
   //     console.log(isJoined);
@@ -33,6 +34,8 @@ const FollowButton: React.FC<FollowButtonProps> = ({
   const isJoined = !!currentProfileState.myFollowings.find(
     (item) => item.name === displayName
   );
+
+  console.log(currentProfileState);
 
   return (
     <>

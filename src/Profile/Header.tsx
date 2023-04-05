@@ -86,18 +86,27 @@ const Header: React.FC<HeaderProps> = ({ userDoc }) => {
             <Text> followers</Text>
           </Flex>
 
-          <Flex
-            _hover={{ color: "gray.400" }}
-            cursor="pointer"
-            mr={6}
-            onClick={() => setOpen(true)}
-          >
-            <Text fontWeight={600} mr={2}>
-              {currentProfileState.totalFollowings}
-            </Text>
+          {userDoc.displayName === user!.email!.split("@")[0] ? (
+            <Flex
+              _hover={{ color: "gray.400" }}
+              cursor="pointer"
+              mr={6}
+              onClick={() => setOpen(true)}
+            >
+              <Text fontWeight={600} mr={2}>
+                {currentProfileState.totalFollowings}
+              </Text>
 
-            <Text> following</Text>
-          </Flex>
+              <Text> following</Text>
+            </Flex>
+          ) : (
+            <Flex>
+              <Text fontWeight={600} mr={2}>
+                {currentProfileState.totalFollowings}
+              </Text>
+              <Text> following</Text>
+            </Flex>
+          )}
         </Flex>
         {userDoc.bio === "" ? (
           <Text mt={4}>{userDoc.displayName}</Text>
