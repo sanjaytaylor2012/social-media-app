@@ -126,21 +126,25 @@ const PostImage: React.FC<PostImageProps> = ({
         ...doc.data(),
       }));
 
+      const updatePost: Post = {
+        creatorId: user!.uid,
+        creatorDisplayName: user!.email!.split("@")[0],
+        body: caption,
+        numberOfComments: 0,
+        createdAt: serverTimestamp() as Timestamp,
+        likes: 0,
+        id: id,
+        imageURL: downloadURL,
+        creatorProfilePic: userDoc!.data()!.profilePic,
+      };
+
       userFollowDocs.forEach(async (item) => {
         const newPostRef = doc(
           firestore,
           `users/${item.id}/homeScreenPosts/${id}`
         );
 
-        await setDoc(newPostRef, newPost);
-
-        await updateDoc(newPostRef, {
-          imageURL: downloadURL,
-        });
-
-        await updateDoc(newPostRef, {
-          creatorProfilePic: userDoc!.data()!.profilePic,
-        });
+        await setDoc(newPostRef, updatePost);
       });
 
       // setCurrentPostState((prev) => ({
