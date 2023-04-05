@@ -37,16 +37,16 @@ import { getDownloadURL, ref, uploadString } from "firebase/storage";
 import { useRouter } from "next/router";
 import { v4 as uuidv4 } from "uuid";
 import { randomUUID } from "crypto";
+import { NavBarState } from "@/atoms/SearchBarAtom";
+import { useRecoilState } from "recoil";
 
 type PostImageProps = {
   setSelectedModal: (input: string) => void;
-  setSelectedTab: (input: string) => void;
   selectedFile: string;
 };
 
 const PostImage: React.FC<PostImageProps> = ({
   setSelectedModal,
-  setSelectedTab,
   selectedFile,
 }) => {
   const [user] = useAuthState(auth);

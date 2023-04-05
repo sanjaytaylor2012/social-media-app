@@ -15,8 +15,8 @@ const FollowButton: React.FC<FollowButtonProps> = ({
   displayName,
 }) => {
   const {
-    currentUserFollowerStateValue,
-    followerStateValue,
+    currentProfileState,
+
     onFollowUnFollow,
     loading,
   } = useProfile(userDoc);
@@ -30,7 +30,7 @@ const FollowButton: React.FC<FollowButtonProps> = ({
   //     });
   //   }, []);
 
-  const isJoined = !!currentUserFollowerStateValue.myFollowings.find(
+  const isJoined = !!currentProfileState.myFollowings.find(
     (item) => item.name === displayName
   );
 

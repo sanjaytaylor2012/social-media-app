@@ -1,26 +1,25 @@
 import { followProfile, UserType } from "@/atoms/userAtom";
 import ProfilePic from "@/CommonlyUsed/profilePic";
-import { auth } from "@/firebase/clientApp";
-import FollowButton from "@/Profile/FollowButton";
-import { Flex, Image, Icon, Button, Text } from "@chakra-ui/react";
-import { useRouter } from "next/router";
+import { Flex, Icon, Button, Text } from "@chakra-ui/react";
+import { User } from "firebase/auth";
+import router from "next/router";
 import React from "react";
-import { useAuthState } from "react-firebase-hooks/auth";
 import { AiOutlineInstagram } from "react-icons/ai";
+import FollowButtonModal from "./FollowButtonModal";
 
-type FollowingProfileItemProps = {
+type FollowerModalItemProps = {
   item: followProfile;
   userDoc: UserType;
-  setOpen: (input: boolean) => void;
+  user: User | null | undefined;
+  setOpenFollowers: (input: boolean) => void;
 };
 
-const FollowingProfileItem: React.FC<FollowingProfileItemProps> = ({
+const FollowerModalItem: React.FC<FollowerModalItemProps> = ({
   item,
   userDoc,
-  setOpen,
+  user,
+  setOpenFollowers,
 }) => {
-  const [user] = useAuthState(auth);
-  const router = useRouter();
   return (
     <Flex align="center" width="100%" justify="space-between">
       <Flex align="center">
@@ -28,14 +27,14 @@ const FollowingProfileItem: React.FC<FollowingProfileItemProps> = ({
         <Text ml={4}>{item.name}</Text>
       </Flex>
       {userDoc.displayName === user!.email!.split("@")[0] ? (
-        <FollowButton displayName={item.name} userDoc={userDoc} />
+        <FollowButtonModal displayName={item.name} userDoc={userDoc} />
       ) : (
         <Button
           variant="login"
           height="30px"
           onClick={() => {
             router.push(`/${item.name}`);
-            setOpen(false);
+            setOpenFollowers(false);
           }}
         >
           View Profile
@@ -44,4 +43,4 @@ const FollowingProfileItem: React.FC<FollowingProfileItemProps> = ({
     </Flex>
   );
 };
-export default FollowingProfileItem;
+export default FollowerModalItem;

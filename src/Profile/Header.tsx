@@ -20,7 +20,7 @@ const Header: React.FC<HeaderProps> = ({ userDoc }) => {
   const [user] = useAuthState(auth);
   const [open, setOpen] = useState(false);
   const [openFollowers, setOpenFollowers] = useState(false);
-  const { followerStateValue, myFollowersStateValue } = useProfile(userDoc);
+  const { currentProfileState } = useProfile(userDoc);
   const [postStateValue, setPostStateValue] = useRecoilState(postState);
 
   // useEffect(() => {
@@ -80,7 +80,7 @@ const Header: React.FC<HeaderProps> = ({ userDoc }) => {
             cursor="pointer"
           >
             <Text fontWeight={600} mr={2}>
-              {myFollowersStateValue.totalFollowers}
+              {currentProfileState.totalFollowers}
             </Text>
 
             <Text> followers</Text>
@@ -93,7 +93,7 @@ const Header: React.FC<HeaderProps> = ({ userDoc }) => {
             onClick={() => setOpen(true)}
           >
             <Text fontWeight={600} mr={2}>
-              {followerStateValue.totalFollowings}
+              {currentProfileState.totalFollowings}
             </Text>
 
             <Text> following</Text>

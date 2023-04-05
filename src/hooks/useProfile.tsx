@@ -1,9 +1,7 @@
 import { Post, postState } from "@/atoms/postAtom";
 import {
-  FollowerStates,
+  currentProfileStates,
   followProfile,
-  UserStates,
-  UserStates1,
   UserType,
 } from "@/atoms/userAtom";
 import { auth, firestore } from "@/firebase/clientApp";
@@ -25,18 +23,12 @@ import { useRecoilState } from "recoil";
 const useProfile = (userDoc?: UserType) => {
   const [user] = useAuthState(auth);
 
-  const [followerStateValue, setFollowerStateValue] =
-    useRecoilState(UserStates);
-
-  const [currentUserFollowerStateValue, setCurrentUserFollowerStateValue] =
-    useRecoilState(UserStates1);
-
-  const [myFollowersStateValue, setMyFollowersStateValue] =
-    useRecoilState(FollowerStates);
+  const [currentProfileState, setCurrentProfileState] =
+    useRecoilState(currentProfileStates);
 
   const [loading, setLoading] = useState(false);
 
-  const getCurrentFollows = async () => {
+  const getCurrentProfileFollows = async () => {
     try {
       const profilesDocs = await getDocs(
         collection(
@@ -49,7 +41,8 @@ const useProfile = (userDoc?: UserType) => {
       // console.log("Snippets", snippets);
 
       //getting ppl that current profile follows
-      setFollowerStateValue((prev) => ({
+      setCurrentProfileState((prev) => ({
+        ...prev,
         myFollowings: snippets as followProfile[],
         totalFollowings: snippets.length,
       }));
@@ -70,7 +63,8 @@ const useProfile = (userDoc?: UserType) => {
       const snippets = profilesDocs.docs.map((doc) => ({ ...doc.data() }));
 
       //getting ppl that current profile follows
-      setCurrentUserFollowerStateValue((prev) => ({
+      setCurrentProfileState((prev) => ({
+        ...prev,
         myFollowings: snippets as followProfile[],
         totalFollowings: snippets.length,
       }));
@@ -79,7 +73,7 @@ const useProfile = (userDoc?: UserType) => {
     }
   };
 
-  const getMyFollowers = async () => {
+  const getCurrentProfileFollowers = async () => {
     try {
       const profilesDocs = await getDocs(
         collection(firestore, `users/${userDoc?.displayName}/followerProfiles/`)
@@ -89,7 +83,8 @@ const useProfile = (userDoc?: UserType) => {
       // console.log("Snippets", snippets);
 
       //getting ppl that follow the current profile
-      setMyFollowersStateValue((prev) => ({
+      setCurrentProfileState((prev) => ({
+        ...prev,
         myFollowers: snippets as followProfile[],
         totalFollowers: snippets.length,
       }));
@@ -99,9 +94,8 @@ const useProfile = (userDoc?: UserType) => {
   };
 
   useEffect(() => {
-    getCurrentFollows();
-    getMyFollowers();
-    getMyFollows();
+    getCurrentProfileFollows();
+    getCurrentProfileFollowers();
   }, []);
 
   const unFollow = async (displayName: string) => {
@@ -134,7 +128,7 @@ const useProfile = (userDoc?: UserType) => {
 
       await batch.commit();
 
-      setFollowerStateValue((prev) => ({
+      setCurrentProfileState((prev) => ({
         ...prev,
         myFollowings: prev.myFollowings.filter(
           (item) => item.name !== displayName
@@ -142,29 +136,13 @@ const useProfile = (userDoc?: UserType) => {
         totalFollowings: prev.totalFollowings,
       }));
 
-      setCurrentUserFollowerStateValue((prev) => ({
-        ...prev,
-        myFollowings: prev.myFollowings.filter(
-          (item) => item.name !== displayName
-        ),
-        totalFollowings: prev.totalFollowings,
-      }));
-
-      setMyFollowersStateValue((prev) => ({
+      setCurrentProfileState((prev) => ({
         ...prev,
         myFollowers: prev.myFollowers.filter(
           (item) => item.name !== displayName
         ),
         totalFollowers: prev.totalFollowers - 1,
       }));
-
-      //   if (userDoc.displayName !== user!.email!.split("@")[0]) {
-      //     userDoc.followers -= 1;
-      //   }
-
-      //   if (userDoc.displayName === user!.email!.split("@")[0]) {
-      //     userDoc.following -= 1;
-      //   }
 
       setLoading(false);
     } catch (error: any) {
@@ -204,7 +182,7 @@ const useProfile = (userDoc?: UserType) => {
 
       await batch.commit();
 
-      setMyFollowersStateValue((prev) => ({
+      setCurrentProfileState((prev) => ({
         ...prev,
         myFollowers: prev.myFollowers.filter(
           (item) => item.name !== displayName
@@ -289,31 +267,17 @@ const useProfile = (userDoc?: UserType) => {
 
       //update recoil state - communityState.mySnippets
 
-      setFollowerStateValue((prev) => ({
+      setCurrentProfileState((prev) => ({
         ...prev,
         myFollowings: [...prev.myFollowings, newSnippet],
         totalFollowings: prev.totalFollowings,
       }));
 
-      setCurrentUserFollowerStateValue((prev) => ({
-        ...prev,
-        myFollowings: [...prev.myFollowings, newSnippet],
-        totalFollowings: prev.totalFollowings,
-      }));
-
-      setMyFollowersStateValue((prev) => ({
+      setCurrentProfileState((prev) => ({
         ...prev,
         myFollowers: [...prev.myFollowers, newFollowerSnippet],
         totalFollowers: prev.totalFollowers + 1,
       }));
-
-      //   if (userDoc.displayName !== user!.email!.split("@")[0]) {
-      //     userDoc.followers += 1;
-      //   }
-
-      //   if (userDoc.displayName === user!.email!.split("@")[0]) {
-      //     userDoc.following += 1;
-      //   }
 
       setLoading(false);
     } catch (error: any) {
@@ -336,11 +300,9 @@ const useProfile = (userDoc?: UserType) => {
 
   return {
     onFollowUnFollow,
-    followerStateValue,
+    currentProfileState,
     loading,
-    myFollowersStateValue,
     removeFollower,
-    currentUserFollowerStateValue,
     getMyFollows,
   };
 };

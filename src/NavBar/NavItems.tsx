@@ -77,29 +77,14 @@ export type formTab = {
 
 const NavItems: React.FC<NavItemsProps> = () => {
   const [user] = useAuthState(auth);
-  const [selectedTab, setSelectedTab] = useState("Home");
-  const [showCreatePostModal, setShowCreatePostModal] = useState(false);
-  const router = useRouter();
 
   return (
     <>
       <Stack spacing={5}>
         {formTabs.map((item) => {
-          return (
-            <NavButton
-              key={item.title}
-              item={item}
-              setSelectedTab={setSelectedTab}
-              selected={item.title === selectedTab}
-              user={user}
-            />
-          );
+          return <NavButton key={item.title} item={item} user={user} />;
         })}
       </Stack>
-
-      {selectedTab === "Create" && (
-        <CreatePostModal setSelectedTab={setSelectedTab} />
-      )}
     </>
   );
 };

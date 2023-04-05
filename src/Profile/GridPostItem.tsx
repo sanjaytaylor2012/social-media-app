@@ -11,13 +11,12 @@ type GridPostItemProps = { item: Post; userDoc: UserType };
 
 const GridPostItem: React.FC<GridPostItemProps> = ({ item, userDoc }) => {
   const [open, setOpen] = useState(false);
-  const { getComments, setLoading } = usePost(item);
+  const { getComments } = usePost(item);
 
   return (
     <>
       <Image
         onClick={() => {
-          setLoading(true);
           getComments(item.creatorDisplayName);
           setOpen(true);
         }}

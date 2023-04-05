@@ -46,7 +46,7 @@ const ViewFollowingModal: React.FC<ViewFollowingModalProps> = ({
   setOpen,
   item,
 }) => {
-  const { addComment, loading, onUnLike, onLike } = usePost(item);
+  const { addComment, onUnLike, onLike, loading } = usePost(item);
   const [comment, setComment] = useState("");
   const [commentState, setCommentState] = useRecoilState(CommentState);
 
@@ -91,23 +91,31 @@ const ViewFollowingModal: React.FC<ViewFollowingModalProps> = ({
                 ) : (
                   <Stack height="30vh" overflowX="hidden" overflowY="auto">
                     {commentState.comments.map((comment: Comment) => {
-                      return <CommentItem comment={comment} />;
+                      return (
+                        <CommentItem
+                          comment={comment}
+                          post={item}
+                          key={comment.id}
+                        />
+                      );
                     })}
                   </Stack>
                 )} */}
 
-                <Stack height="100%" overflowX="hidden" overflowY="auto">
-                  {commentState.comments.map((comment: any) => {
-                    return (
-                      <CommentItem
-                        post={item}
-                        key={comment.id}
-                        comment={comment}
-                      />
-                    );
-                  })}
-                  <div ref={messagesEndRef} />
-                </Stack>
+                {loading === false && (
+                  <Stack maxHeight="50vh" overflowX="hidden" overflowY="auto">
+                    {commentState.comments.map((comment: any) => {
+                      return (
+                        <CommentItem
+                          post={item}
+                          key={comment.id}
+                          comment={comment}
+                        />
+                      );
+                    })}
+                    <div ref={messagesEndRef} />
+                  </Stack>
+                )}
 
                 <PostInfoSection
                   onLike={onLike}

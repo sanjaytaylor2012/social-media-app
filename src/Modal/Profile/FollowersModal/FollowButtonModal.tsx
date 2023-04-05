@@ -14,21 +14,8 @@ const FollowButtonModal: React.FC<FollowButtonModalProps> = ({
   userDoc,
   displayName,
 }) => {
-  const { followerStateValue, onFollowUnFollow, loading, removeFollower } =
-    useProfile(userDoc);
+  const { loading, removeFollower } = useProfile(userDoc);
   const [user] = useAuthState(auth);
-
-  //   useEffect(() => {
-  //     console.log(isJoined);
-  //     followerStateValue.myFollowings.forEach((item) => {
-  //       console.log("hi");
-  //       console.log("here is item", item);
-  //     });
-  //   }, []);
-
-  const isJoined = !!followerStateValue.myFollowings.find(
-    (item) => item.name === displayName
-  );
 
   return (
     <>

@@ -1,5 +1,5 @@
 import { homeScreenPostState, Post, postState } from "@/atoms/postAtom";
-import { FollowerStates, UserStates1, UserType } from "@/atoms/userAtom";
+import { UserType } from "@/atoms/userAtom";
 import { auth, firestore } from "@/firebase/clientApp";
 import PostItem from "@/HomeScreen/PostItem";
 import SwitchAccountIcon from "@/HomeScreen/SwitchAccountIcon";
@@ -69,7 +69,7 @@ const index: React.FC = ({}) => {
     }
   };
 
-  const { getMyFollows } = useProfile();
+  const { getMyFollows, currentProfileState } = useProfile();
   const router = useRouter();
 
   // useEffect(() => {
@@ -85,10 +85,8 @@ const index: React.FC = ({}) => {
 
   useEffect(() => {
     getPosts();
+    getMyFollows();
   }, []);
-
-  const [currentUserFollowerStateValue, setCurrentUserFollowerStateValue] =
-    useRecoilState(UserStates1);
 
   return (
     <PageContent>
@@ -119,7 +117,7 @@ const index: React.FC = ({}) => {
         >
           <SwitchAccountIcon profilePic={profilePicUser} user={user} />
           <Text>Following</Text>
-          {currentUserFollowerStateValue.myFollowings.map((item) => {
+          {currentProfileState.myFollowings.map((item) => {
             return (
               <Flex
                 align="center"

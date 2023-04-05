@@ -26,7 +26,7 @@ const ViewFollowingModal: React.FC<ViewFollowingModalProps> = ({
   setOpen,
   userDoc,
 }) => {
-  const { followerStateValue } = useProfile(userDoc);
+  const { currentProfileState } = useProfile(userDoc);
 
   return (
     <Modal isOpen={open} onClose={() => setOpen(false)}>
@@ -43,7 +43,7 @@ const ViewFollowingModal: React.FC<ViewFollowingModalProps> = ({
         <ModalCloseButton />
         <ModalBody>
           <Stack align="center">
-            {followerStateValue.myFollowings.map((item) => {
+            {currentProfileState.myFollowings.map((item) => {
               return (
                 <FollowingProfileItem
                   setOpen={setOpen}

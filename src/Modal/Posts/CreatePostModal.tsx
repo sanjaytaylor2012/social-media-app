@@ -17,7 +17,7 @@ import {
   Textarea,
 } from "@chakra-ui/react";
 import React, { useRef, useState } from "react";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import { MdAddToPhotos } from "react-icons/md";
 import SelectPic from "./SelectPic";
 import { BsArrowLeft } from "react-icons/bs";
@@ -25,12 +25,15 @@ import ImageView from "./ImageView";
 import ReactCrop from "react-image-crop";
 import "react-image-crop/dist/ReactCrop.css";
 import PostImage from "./PostImage";
+import { NavBarState } from "@/atoms/SearchBarAtom";
 
-type AuthModalProps = { setSelectedTab: (input: string) => void };
+type AuthModalProps = {};
 
-const AuthModal: React.FC<AuthModalProps> = ({ setSelectedTab }) => {
+const AuthModal: React.FC<AuthModalProps> = () => {
   const [selectedFile, setSelectedFile] = useState("");
   const [selectedModal, setSelectedModal] = useState("SelectImage");
+  const setSelectedTab = useSetRecoilState(NavBarState);
+
   const [imageDimensions, setImageDimensions] = useState({
     width: 0,
     height: 0,
@@ -62,7 +65,15 @@ const AuthModal: React.FC<AuthModalProps> = ({ setSelectedTab }) => {
 
   return (
     <>
-      <Modal isOpen={true} onClose={() => setSelectedTab("Home")}>
+      <Modal
+        isOpen={true}
+        onClose={() =>
+          setSelectedTab((prev) => ({
+            selectedTab: prev.previousTab,
+            previousTab: "Create",
+          }))
+        }
+      >
         {selectedModal === "SelectImage" && (
           <SelectPic onSelectImage={onSelectImage} />
         )}
@@ -76,7 +87,6 @@ const AuthModal: React.FC<AuthModalProps> = ({ setSelectedTab }) => {
         )}
         {selectedModal === "Post" && (
           <PostImage
-            setSelectedTab={setSelectedTab}
             setSelectedModal={setSelectedModal}
             selectedFile={selectedFile}
           />
