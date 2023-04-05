@@ -113,7 +113,7 @@ const index: React.FC = ({}) => {
           p={4}
           borderRadius="10px"
           borderColor="gray.400"
-          width="300px"
+          width="400px"
         >
           <SwitchAccountIcon profilePic={profilePicUser} user={user} />
           <Text>Following</Text>
