@@ -19,13 +19,19 @@ const NavBar: React.FC = () => {
       height="100vh"
       justify="space-around"
     >
-      <Image
-        pl={5}
-        src="/images/Instagram_logo.svg.png"
-        height="auto"
-        mt={9}
-        width={{ base: "0%", md: "70%" }}
-      />
+      <Flex align="center">
+        <Text mt={10} mr={-5}>
+          not
+        </Text>
+        <Image
+          pl={5}
+          src="/images/Instagram_logo.svg.png"
+          height="auto"
+          mt={9}
+          width={{ base: "0%", md: "70%" }}
+        />
+      </Flex>
+
       <NavItems />
       <NavMenu />
     </Stack>
