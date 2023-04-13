@@ -69,7 +69,7 @@ const index: React.FC = ({}) => {
     }
   };
 
-  const { getMyFollows, currentProfileState } = useProfile();
+  const { getMyFollows, currentUserProfileState } = useProfile();
   const router = useRouter();
 
   // useEffect(() => {
@@ -117,7 +117,7 @@ const index: React.FC = ({}) => {
         >
           <SwitchAccountIcon profilePic={profilePicUser} user={user} />
           <Text>Following</Text>
-          {currentProfileState.myFollowings.map((item) => {
+          {currentUserProfileState.myFollowings.map((item) => {
             return (
               <Flex
                 align="center"

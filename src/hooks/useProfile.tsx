@@ -1,6 +1,7 @@
 import { Post, postState } from "@/atoms/postAtom";
 import {
   currentProfileStates,
+  currentUserStates,
   followProfile,
   UserType,
 } from "@/atoms/userAtom";
@@ -25,6 +26,9 @@ const useProfile = (userDoc?: UserType) => {
 
   const [currentProfileState, setCurrentProfileState] =
     useRecoilState(currentProfileStates);
+
+  const [currentUserProfileState, setCurrentUserProfileState] =
+    useRecoilState(currentUserStates);
 
   const [loading, setLoading] = useState(false);
 
@@ -63,7 +67,13 @@ const useProfile = (userDoc?: UserType) => {
       const snippets = profilesDocs.docs.map((doc) => ({ ...doc.data() }));
 
       //getting ppl that current profile follows
-      setCurrentProfileState((prev) => ({
+      // setCurrentProfileState((prev) => ({
+      //   ...prev,
+      //   myFollowings: snippets as followProfile[],
+      //   totalFollowings: snippets.length,
+      // }));
+
+      setCurrentUserProfileState((prev) => ({
         ...prev,
         myFollowings: snippets as followProfile[],
         totalFollowings: snippets.length,
@@ -87,6 +97,12 @@ const useProfile = (userDoc?: UserType) => {
         ...prev,
         myFollowers: snippets as followProfile[],
         totalFollowers: snippets.length,
+      }));
+
+      setCurrentUserProfileState((prev) => ({
+        ...prev,
+        myFollowings: snippets as followProfile[],
+        totalFollowings: snippets.length,
       }));
     } catch (error: any) {
       console.log("Snippets error,", error.message);
@@ -304,6 +320,7 @@ const useProfile = (userDoc?: UserType) => {
     loading,
     removeFollower,
     getMyFollows,
+    currentUserProfileState,
   };
 };
 

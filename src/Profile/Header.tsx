@@ -20,13 +20,12 @@ const Header: React.FC<HeaderProps> = ({ userDoc }) => {
   const [user] = useAuthState(auth);
   const [open, setOpen] = useState(false);
   const [openFollowers, setOpenFollowers] = useState(false);
-  const { currentProfileState } = useProfile(userDoc);
+  const { currentProfileState, getMyFollows } = useProfile(userDoc);
   const [postStateValue, setPostStateValue] = useRecoilState(postState);
 
   // useEffect(() => {
-  //   console.log("user.DisplayName", user!.email!.split("@")[0]);
-  //   console.log("userDoc.DisplayName", userDoc.displayName);
-  // }, [user]);
+  //   getMyFollows();
+  // }, []);
 
   return (
     <Flex align="center" mt={6} ml={39} mb={4}>
@@ -100,7 +99,13 @@ const Header: React.FC<HeaderProps> = ({ userDoc }) => {
               <Text> following</Text>
             </Flex>
           ) : (
-            <Flex>
+            <Flex
+              cursor="pointer"
+              _hover={{ color: "gray.400" }}
+              onClick={() => {
+                setOpen(true);
+              }}
+            >
               <Text fontWeight={600} mr={2}>
                 {currentProfileState.totalFollowings}
               </Text>

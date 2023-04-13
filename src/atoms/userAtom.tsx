@@ -36,3 +36,8 @@ export const currentProfileStates = atom<UserStates>({
   key: "UserState",
   default: defaultUserStates,
 });
+
+export const currentUserStates = atom<UserStates>({
+  key: "CurrentUserState",
+  default: defaultUserStates,
+});
