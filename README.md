@@ -23,7 +23,7 @@ Also, this is still in development and will have some bugs.
 ---
 
 ## Inspiration
-Since coming to college, I have been more disconnected from my family than ever. To add to this, my parents do not use any forms of social media because of the privacy concerns that come with large tech companies. Thus, I created my own social media platform so that I could remain connected with my parents.
+Since coming to college, I have been more disconnected from my family than ever. To add to this, my parents do not use any forms of social media because of the privacy concerns that come with large tech companies. Thus, I created my own social media platform so that I could remain connected with my parents. The reason I chose to style this like Instagram was as to challenge my web design prowess. The nuance to get the site to look as close to Instagram as possible took a lot of fine-tuning.
 
 ## What is the Instagram Clone?
 This is an (almost) full featured Instagram clone that I built on my own, from scratch. Some of its features include post creation and management, account management, post commenting, post liking, and more.
