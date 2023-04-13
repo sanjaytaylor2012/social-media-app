@@ -1,5 +1,31 @@
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
+
+# Instagram Clone
+
+Check out the site at: https://social-media-app-two-teal.vercel.app/
+
+## Table of Contents
+- [Inspiration](#inspiration)
+- [How I built it](#how-we-built-it)
+- [Challenges](#challenges)
+- [Accomplishments](#accomplishments)
+
+---
+
+## Inspiration
+Since coming to college, I have been more disconnected from my family than ever. To add to this, my parents do not use any forms of social media because of the privacy concerns that come with large tech companies. Thus, I created my own social media platform so that I could remain connected with my parents.
+
+## What is the Instagram Clone?
+This is an (almost) full featured Instagram clone that I built on my own, from scratch. Some of its features include post creation and management, account management, post commenting, post liking, and more.
+
+## How we built it
+The frontend of the site was created with Next.js, a React.js metaframework. I utilized Chakra UI to build out the CSS of the site and provide styling. Recoil.js was used for a global state management. Also, the whole thing was written in Typescript. The frontend is deployed with Vercel. The backend is provided through Google Firebase. I utilized Firebase Auth for secure user authenticaion, Firebase Firestore (a non-relational database) for storage of post, comment, and user objects. Firebase Storage was used for image storage. I implemented Cloud Functions to provide some advanced backend functionality such as storing user objects apart from the Firebase Auth user objects.
+
+## Challenges
+The biggest challenge I faced was the implementation of Firebase Firestore. I had never implemented a database into an application before and as Firestore allows for a lot of freedom in how data is structured, structuring the data in an efficient and optimal layout was hard. Each user needs access to lots of data such as who they follow, who is following them, posts they have liked, likes on their posts, as well as the entirety of the commenting system for each post. In the end, I got a database model with a very hierarchical structure storing user objects at a high level, which store posts, a bio, username, email, profile picture as well as users they are following and the users following them. Each post object has its own information such as the caption, image, number of likes, post creation date, comment objects and more. Each comment object contains the name of the commenter, their profile picture, as well as their comment.
+
+
 ## Getting Started
 
 First, run the development server:
