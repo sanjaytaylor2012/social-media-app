@@ -4,6 +4,11 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 # Instagram Clone
 
 Check out the site at: https://social-media-app-two-teal.vercel.app/
+Log in with:
+username: test@gmail.com
+password: test123
+for a look at an already setup profile!
+Note: this site is not optimized for mobile yet, so it will not look right on a phone.
 
 ## Table of Contents
 - [Inspiration](#inspiration)
