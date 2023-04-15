@@ -11,24 +11,26 @@ import NavMenu from "./NavMenu";
 const NavBar: React.FC = () => {
   return (
     <Stack
-      position="fixed"
-      top={0}
+      // position="fixed"
+      // left={0}
       border="1px solid"
       borderColor="gray.300"
       width={{ base: "50px", md: "245px" }}
+      // display={{ base: "none", md: "flex" }}
       height="100vh"
       justify="space-around"
+      mr="5vw"
     >
       <Flex align="center">
-        <Text mt={10} mr={-5}>
+        {/* <Text mt={10} mr={-5}>
           not
-        </Text>
+        </Text> */}
         <Image
           pl={5}
           src="/images/Instagram_logo.svg.png"
           height="auto"
           mt={9}
-          width={{ base: "0%", md: "70%" }}
+          width={{ sm: "0%", md: "70%" }}
         />
       </Flex>
 

@@ -19,7 +19,7 @@ const ProfilePage: React.FC<indexProps> = ({ userDoc }) => {
   console.log(userDoc);
   return (
     <>
-      <Stack width="100%" ml={{ base: 20, md: 20 }} mb={5} mr={5}>
+      <Stack mb={5} mr={"5vw"}>
         <Header userDoc={userDoc} />
         <ProfilePosts userDoc={userDoc} />
       </Stack>

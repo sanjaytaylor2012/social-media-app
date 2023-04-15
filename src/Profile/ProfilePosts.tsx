@@ -76,7 +76,7 @@ const Posts: React.FC<PostsProps> = ({ userDoc }) => {
   }, [userDoc]);
 
   return (
-    <Stack align="center" mr={5}>
+    <Stack align="center">
       <Flex width="100%" justify="center">
         <Divider
           width="95%"

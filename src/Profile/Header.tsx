@@ -28,7 +28,7 @@ const Header: React.FC<HeaderProps> = ({ userDoc }) => {
   // }, []);
 
   return (
-    <Flex align="center" mt={6} ml={39} mb={4}>
+    <Flex align="center" mt={6} mb={4}>
       {userDoc.profilePic === "" ? (
         <Icon fontSize={150} as={AiOutlineInstagram} mr={20} />
       ) : (

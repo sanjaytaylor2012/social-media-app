@@ -15,6 +15,9 @@ import {
   getDoc,
   orderBy,
   query,
+  deleteDoc,
+  where,
+  setDoc,
 } from "firebase/firestore";
 import { ref } from "firebase/storage";
 import React, { useEffect, useState } from "react";
@@ -115,6 +118,7 @@ const useProfile = (userDoc?: UserType) => {
   }, []);
 
   const unFollow = async (displayName: string) => {
+    //delete currently displayed profile from current users following profiles
     try {
       setLoading(true);
       const batch = writeBatch(firestore);
@@ -126,6 +130,7 @@ const useProfile = (userDoc?: UserType) => {
         )
       );
 
+      //delete current user from diplayed profiles follower profiles
       batch.delete(
         doc(
           firestore,
@@ -144,21 +149,58 @@ const useProfile = (userDoc?: UserType) => {
 
       await batch.commit();
 
-      setCurrentProfileState((prev) => ({
-        ...prev,
-        myFollowings: prev.myFollowings.filter(
-          (item) => item.name !== displayName
-        ),
-        totalFollowings: prev.totalFollowings,
+      //remove currently displayed profiles posts from users home screen
+
+      const homeScreen = await getDocs(
+        collection(
+          firestore,
+          `users/${user!.email!.split("@")[0]}/homeScreenPosts`
+        )
+      );
+
+      const homeScreenDocs = homeScreen.docs.map((doc) => ({
+        ...doc.data(),
       }));
 
-      setCurrentProfileState((prev) => ({
-        ...prev,
-        myFollowers: prev.myFollowers.filter(
-          (item) => item.name !== displayName
-        ),
-        totalFollowers: prev.totalFollowers - 1,
-      }));
+      homeScreenDocs.forEach(async (document) => {
+        console.log(document);
+        if (document.creatorDisplayName === displayName) {
+          await deleteDoc(
+            doc(
+              firestore,
+              `users/${user!.email!.split("@")[0]}/homeScreenPosts`,
+              document.id
+            )
+          );
+        }
+      });
+
+      //different behaviour depending on whether we are looking at our profile or not
+
+      if (userDoc?.displayName == user!.email!.split("@")[0]) {
+        setCurrentProfileState((prev) => ({
+          ...prev,
+          myFollowings: prev.myFollowings.filter(
+            (item) => item.name !== displayName
+          ),
+          totalFollowings: prev.totalFollowings - 1,
+        }));
+      } else {
+        setCurrentUserProfileState((prev) => ({
+          ...prev,
+          myFollowings: prev.myFollowings.filter(
+            (item) => item.name !== displayName
+          ),
+        }));
+
+        setCurrentProfileState((prev) => ({
+          ...prev,
+          myFollowers: prev.myFollowers.filter(
+            (item) => item.name !== user!.email!.split("@")[0]
+          ),
+          totalFollowers: prev.totalFollowers - 1,
+        }));
+      }
 
       setLoading(false);
     } catch (error: any) {
@@ -197,6 +239,14 @@ const useProfile = (userDoc?: UserType) => {
       });
 
       await batch.commit();
+
+      setCurrentUserProfileState((prev) => ({
+        ...prev,
+        myFollowings: prev.myFollowings.filter(
+          (item) => item.name !== displayName
+        ),
+        totalFollowings: prev.totalFollowings - 1,
+      }));
 
       setCurrentProfileState((prev) => ({
         ...prev,
@@ -281,9 +331,35 @@ const useProfile = (userDoc?: UserType) => {
 
       await batch.commit();
 
+      //add most recent posts (within 7 days) to users home screen
+
+      const sevenDaysAgo = new Date();
+      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+      const postsQuery = query(
+        collection(firestore, `users/${displayName}/posts`),
+        where("createdAt", ">=", sevenDaysAgo)
+      );
+
+      const userPost = await getDocs(postsQuery);
+
+      const userPostDocs = userPost.docs.map((doc) => ({
+        ...doc.data(),
+      }));
+
+      userPostDocs.forEach(async (document) => {
+        await setDoc(
+          doc(
+            firestore,
+            `users/${user!.email!.split("@")[0]}/homeScreenPosts/${document.id}`
+          ),
+          document
+        );
+      });
+
       //update recoil state - communityState.mySnippets
 
-      setCurrentProfileState((prev) => ({
+      setCurrentUserProfileState((prev) => ({
         ...prev,
         myFollowings: [...prev.myFollowings, newSnippet],
         totalFollowings: prev.totalFollowings,
@@ -321,6 +397,7 @@ const useProfile = (userDoc?: UserType) => {
     removeFollower,
     getMyFollows,
     currentUserProfileState,
+    unFollow,
   };
 };
 

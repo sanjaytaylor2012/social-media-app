@@ -10,12 +10,7 @@ const PageContent: React.FC<PageContentProps> = ({ children }) => {
     <Flex mt={10} p="16px 0px">
       <Flex width="95%" justify="center" maxWidth="860px">
         {/* LHS */}
-        <Flex
-          ml={60}
-          direction="column"
-          width={{ base: "100%", md: "65%" }}
-          mr={{ base: 6, md: 6 }}
-        >
+        <Flex direction="column" width={{ base: "100%", md: "65%" }} mr="6vw">
           {children && children[0 as keyof typeof children]}
         </Flex>
         {/* RHS */}

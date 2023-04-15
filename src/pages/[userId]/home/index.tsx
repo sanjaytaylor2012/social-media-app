@@ -2,6 +2,7 @@ import { homeScreenPostState, Post, postState } from "@/atoms/postAtom";
 import { UserType } from "@/atoms/userAtom";
 import { auth, firestore } from "@/firebase/clientApp";
 import PostItem from "@/HomeScreen/PostItem";
+import SideBarItems from "@/HomeScreen/sideBarItems";
 import SwitchAccountIcon from "@/HomeScreen/SwitchAccountIcon";
 import useProfile from "@/hooks/useProfile";
 import PageContent from "@/Layout/PageContent";
@@ -9,6 +10,7 @@ import FollowButtonModal from "@/Modal/Profile/FollowersModal/FollowButtonModal"
 import ViewLikesModal from "@/Modal/Profile/PostModal/ViewLikesModal";
 import GridPostItem from "@/Profile/GridPostItem";
 import { Stack, Flex, Image, Icon, Button, Text } from "@chakra-ui/react";
+import { uuidv4 } from "@firebase/util";
 import {
   query,
   collection,
@@ -99,7 +101,7 @@ const index: React.FC = ({}) => {
           {currentPostState.posts.map((item: any) => {
             return (
               <>
-                <PostItem key={item.id} item={item} />
+                <PostItem key={uuidv4()} item={item} />
               </>
             );
           })}
@@ -113,45 +115,13 @@ const index: React.FC = ({}) => {
           p={4}
           borderRadius="10px"
           borderColor="gray.400"
-          width="400px"
+          width="30vw"
+          mr={4}
         >
           <SwitchAccountIcon profilePic={profilePicUser} user={user} />
           <Text>Following</Text>
           {currentUserProfileState.myFollowings.map((item) => {
-            return (
-              <Flex
-                align="center"
-                width="100%"
-                key={item.name}
-                justify="space-between"
-              >
-                <Flex align="center">
-                  {item.profilePic === "" ? (
-                    <Icon fontSize={30} mr={1} as={AiOutlineInstagram} />
-                  ) : (
-                    <Image
-                      objectFit="cover"
-                      borderRadius="full"
-                      boxSize="30px"
-                      src={item.profilePic}
-                      mr={1}
-                    />
-                  )}
-                  {item.name}
-                </Flex>
-
-                <Button
-                  ml={4}
-                  height="30px"
-                  variant="login"
-                  onClick={() => {
-                    router.push(`/${item.name}`);
-                  }}
-                >
-                  View Profile
-                </Button>
-              </Flex>
-            );
+            return <SideBarItems key={uuidv4()} item={item} />;
           })}
         </Stack>
       </>

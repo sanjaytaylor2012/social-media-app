@@ -1,6 +1,7 @@
 import { followProfile, UserType } from "@/atoms/userAtom";
 import ProfilePic from "@/CommonlyUsed/ProfilePic";
 import { auth } from "@/firebase/clientApp";
+import useProfile from "@/hooks/useProfile";
 import FollowButton from "@/Profile/FollowButton";
 import { Flex, Image, Icon, Button, Text } from "@chakra-ui/react";
 import { useRouter } from "next/router";
@@ -21,6 +22,8 @@ const FollowingProfileItem: React.FC<FollowingProfileItemProps> = ({
 }) => {
   const [user] = useAuthState(auth);
   const router = useRouter();
+  const { unFollow } = useProfile(userDoc);
+
   return (
     <Flex align="center" width="100%" justify="space-between">
       <Flex align="center">
@@ -28,7 +31,18 @@ const FollowingProfileItem: React.FC<FollowingProfileItemProps> = ({
         <Text ml={4}>{item.name}</Text>
       </Flex>
       {userDoc.displayName === user!.email!.split("@")[0] ? (
-        <FollowButton displayName={item.name} userDoc={userDoc} />
+        <Button
+          _hover={{ bg: "gray.300" }}
+          color="black"
+          bg="gray.200"
+          height="30px"
+          variant="login"
+          onClick={() => {
+            unFollow(item.name);
+          }}
+        >
+          Unfollow
+        </Button>
       ) : (
         <Button
           variant="login"
