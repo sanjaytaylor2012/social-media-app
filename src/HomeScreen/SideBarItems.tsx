@@ -8,7 +8,13 @@ type SideBarItemsProps = { item: followProfile };
 
 const SideBarItems: React.FC<SideBarItemsProps> = ({ item }) => {
   return (
-    <Flex align="center" width="100%" key={item.name} justify="space-between">
+    <Flex
+      align="center"
+      width="100%"
+      display={{ base: "none", md: "flex" }}
+      key={item.name}
+      justify="space-between"
+    >
       <Flex align="center">
         {item.profilePic === "" ? (
           <Icon fontSize={30} mr={1} as={AiOutlineInstagram} />

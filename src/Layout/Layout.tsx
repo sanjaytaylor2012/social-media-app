@@ -8,6 +8,7 @@ import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import { User } from "firebase/auth";
 import PostLoader from "./PostLoader";
 import { useRouter } from "next/router";
+import InstagramBannerTop from "@/NavBar/InstagramBannerTop";
 
 type LayoutProps = {
   children: ReactNode;
@@ -34,11 +35,15 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   return (
     <>
       {user && (
-        <Flex>
+        <Flex
+          direction={{ base: "column-reverse", sm: "row", md: "row" }}
+          // ml={{ base: "25vw", sm: "0vw", md: "0vw" }}
+        >
           <NavBar />
           <Flex justify="center" height="100%" width="100%">
             <main>{children}</main>
           </Flex>
+          <InstagramBannerTop />
         </Flex>
       )}
       {loading && <PostLoader />}

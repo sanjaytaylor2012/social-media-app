@@ -17,20 +17,21 @@ const PostItem: React.FC<PostItemProps> = ({ item }) => {
   const { onLike, onUnLike, loading } = usePost(item);
 
   return (
-    <Stack mb={10} width="100%">
+    <Stack mb={10} width={{ base: "100vw", sm: "100%" }}>
       <PostHeader item={item} />
       <Image
-        onClick={() => {
-          setLoading(true);
-          getComments(item.creatorDisplayName);
-        }}
+        // onClick={() => {
+        //   setLoading(true);
+        //   getComments(item.creatorDisplayName);
+        // }}
         objectFit="cover"
         src={item.imageURL}
-        width="400px"
-        height="500px"
+        width={{ base: "100vw", sm: "300px", md: "400px" }}
+        height={{ base: "125vw", sm: "375px", md: "500px" }}
         // width={{ base: "40%", md: "70%" }}
         // height={{ base: "70%", md: "90%" }}
       />
+
       <HomeScreenPostInfoSection
         getComments={getComments}
         item={item}

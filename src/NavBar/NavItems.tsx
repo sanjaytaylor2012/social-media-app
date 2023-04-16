@@ -80,7 +80,12 @@ const NavItems: React.FC<NavItemsProps> = () => {
 
   return (
     <>
-      <Stack spacing={5}>
+      <Stack
+        spacing={{ base: 0, sm: 5, md: 5 }}
+        direction={{ base: "row", sm: "column", md: "column" }}
+        justify={{ base: "center" }}
+        align="center"
+      >
         {formTabs.map((item) => {
           return <NavButton key={item.title} item={item} user={user} />;
         })}

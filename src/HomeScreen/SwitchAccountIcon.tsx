@@ -29,12 +29,14 @@ const SwitchAccountIcon: React.FC<SwitchAccountIconProps> = ({
             <Image
               objectFit="cover"
               borderRadius="full"
-              boxSize="40px"
+              boxSize={{ base: "0px", md: "40px" }}
               src={profilePic}
               mr={1}
             />
           )}
-          <Text fontWeight="600">{user!.email!.split("@")[0]}</Text>
+          <Text fontSize={{ base: "0pt", md: "12pt" }} fontWeight="600">
+            {user!.email!.split("@")[0]}
+          </Text>
         </Flex>
         <Text
           onClick={() => {
@@ -44,12 +46,13 @@ const SwitchAccountIcon: React.FC<SwitchAccountIconProps> = ({
           }}
           color="blue.500"
           cursor="pointer"
+          fontSize={{ base: "0pt", md: "12pt" }}
         >
           Switch
         </Text>
       </Flex>
 
-      <Divider width="100%" color="gray.300" border="1px solid" />
+      <Divider color="gray.300" border={{ base: "0px", md: "1px solid" }} />
       <Flex align="top"></Flex>
     </>
   );

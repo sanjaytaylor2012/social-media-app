@@ -2,7 +2,7 @@ import { homeScreenPostState, Post, postState } from "@/atoms/postAtom";
 import { UserType } from "@/atoms/userAtom";
 import { auth, firestore } from "@/firebase/clientApp";
 import PostItem from "@/HomeScreen/PostItem";
-import SideBarItems from "@/HomeScreen/sideBarItems";
+import SideBarItems from "@/HomeScreen/SideBarItems";
 import SwitchAccountIcon from "@/HomeScreen/SwitchAccountIcon";
 import useProfile from "@/hooks/useProfile";
 import PageContent from "@/Layout/PageContent";
@@ -110,16 +110,18 @@ const index: React.FC = ({}) => {
       <>
         <Stack
           align="start"
-          ml={4}
-          border="3px solid"
-          p={4}
-          borderRadius="10px"
+          // border="3px solid"
+          p={{ base: 0, sm: 4 }}
+          borderRadius={{ base: "0px", md: "10px" }}
           borderColor="gray.400"
-          width="30vw"
-          mr={4}
+          borderWidth={{ base: "0px", md: "3px" }}
+          width={{ base: "0vw", md: "30vw" }}
+          maxWidth="400px"
+          minWidth={{ base: "0px", sm: "300px" }}
+          // border="1px solid"
         >
           <SwitchAccountIcon profilePic={profilePicUser} user={user} />
-          <Text>Following</Text>
+          <Text fontSize={{ base: "0px", md: "12pt" }}>Following</Text>
           {currentUserProfileState.myFollowings.map((item) => {
             return <SideBarItems key={uuidv4()} item={item} />;
           })}

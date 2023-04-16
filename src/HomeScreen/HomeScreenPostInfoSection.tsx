@@ -41,8 +41,12 @@ const HomeScreenPostInfoSection: React.FC<HomeScreenPostInfoSectionProps> = ({
 
   return (
     <Flex direction="column">
-      <Divider width="400px" color="gray.300" border="1px solid" />
-      <Flex>
+      <Divider
+        width={{ base: "100vw", sm: "300px", md: "400px" }}
+        color="gray.300"
+        border="1px solid"
+      />
+      <Flex ml={{ base: 2, sm: 0, md: 0 }}>
         <Icon
           cursor="pointer"
           fontSize={30}
@@ -84,7 +88,7 @@ const HomeScreenPostInfoSection: React.FC<HomeScreenPostInfoSectionProps> = ({
           {currentCommentState.likes - 1} others
         </Text>
       )} */}
-      <Flex>
+      <Flex ml={{ base: 2, sm: 0, md: 0 }}>
         <Flex>
           <Text
             sx={{ float: "left", shapeOutside: "circle(50%)" }}
@@ -100,6 +104,7 @@ const HomeScreenPostInfoSection: React.FC<HomeScreenPostInfoSectionProps> = ({
       </Flex>
 
       <Text
+        ml={{ base: 2, sm: 0, md: 0 }}
         cursor="pointer"
         _hover={{ color: "gray.300" }}
         onClick={() => {
