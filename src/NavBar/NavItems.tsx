@@ -83,7 +83,6 @@ const NavItems: React.FC<NavItemsProps> = () => {
       <Stack
         spacing={{ base: 0, sm: 5, md: 5 }}
         direction={{ base: "row", sm: "column", md: "column" }}
-        justify={{ base: "center" }}
         align="center"
       >
         {formTabs.map((item) => {

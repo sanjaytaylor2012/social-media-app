@@ -24,7 +24,11 @@ const SwitchAccountIcon: React.FC<SwitchAccountIconProps> = ({
       <Flex align="center" justify="space-between" width="100%">
         <Flex align="center">
           {profilePic === "" ? (
-            <Icon fontSize={40} mr={1} as={AiOutlineInstagram} />
+            <Icon
+              fontSize={{ base: 0, md: 40 }}
+              mr={1}
+              as={AiOutlineInstagram}
+            />
           ) : (
             <Image
               objectFit="cover"

@@ -20,8 +20,8 @@ const InstagramBannerTop: React.FC<InstagramBannerTopProps> = () => {
     >
       <Image
         mt={2}
-        width={"170px"}
-        height="55px"
+        width={"140px"}
+        height="45px"
         src="/images/Instagram_logo.svg.png"
       />
       <Flex>

@@ -41,11 +41,6 @@ const HomeScreenPostInfoSection: React.FC<HomeScreenPostInfoSectionProps> = ({
 
   return (
     <Flex direction="column">
-      <Divider
-        width={{ base: "100vw", sm: "300px", md: "400px" }}
-        color="gray.300"
-        border="1px solid"
-      />
       <Flex ml={{ base: 2, sm: 0, md: 0 }}>
         <Icon
           cursor="pointer"

@@ -40,11 +40,6 @@ const PostHeader: React.FC<PostHeaderProps> = ({ item }) => {
           </Text>
         </Flex>
       </Flex>
-      <Divider
-        width={{ base: "100vw", sm: "300px", md: "400px" }}
-        color="gray.300"
-        border="1px solid"
-      />
     </>
   );
 };

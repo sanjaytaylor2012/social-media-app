@@ -34,9 +34,9 @@ const NavBar: React.FC = () => {
           height="auto"
           mt={9}
           width={{ base: "0%", sm: "0%", md: "70%" }}
+          display={{ base: "none" }}
         />
       </Flex>
-
       <NavItems />
       <Flex display={{ base: "none", sm: "flex" }}>
         <NavMenu />
