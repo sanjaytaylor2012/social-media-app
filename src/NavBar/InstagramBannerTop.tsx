@@ -7,7 +7,6 @@ type InstagramBannerTopProps = {};
 const InstagramBannerTop: React.FC<InstagramBannerTopProps> = () => {
   return (
     <Flex
-      direction={"row"}
       border="1px solid"
       borderColor="gray.300"
       width={"100%"}
@@ -16,15 +15,18 @@ const InstagramBannerTop: React.FC<InstagramBannerTopProps> = () => {
       top={0}
       backgroundColor="white"
       display={{ base: "flex", sm: "none" }}
-      justify={"space-around"}
+      justify={"space-between"}
+      align="center"
     >
       <Image
-        pl={5}
+        mt={2}
+        width={"170px"}
+        height="55px"
         src="/images/Instagram_logo.svg.png"
-        height="auto"
-        width={"10%"}
       />
-      <NavMenu />
+      <Flex>
+        <NavMenu />
+      </Flex>
     </Flex>
   );
 };

@@ -12,14 +12,14 @@ const LoginPage: React.FC<LoginPageProps> = ({ setLoginState }) => {
       <Image
         src="/images/loging.png"
         height="500px"
-        width={{ sm: "0", md: "unset" }}
+        width={{ base: "0", md: "unset" }}
       />
 
       <Flex align="center" direction="column">
         <Flex
           direction="column"
           align="center"
-          width="400px"
+          width={{ base: "350px", sm: "400px" }}
           border="1px solid"
           borderColor="gray.300"
           pt={4}
@@ -63,7 +63,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ setLoginState }) => {
         <Flex
           mt={4}
           justify="center"
-          width="400px"
+          width={{ base: "350px", sm: "400px" }}
           border="1px solid"
           borderColor="gray.300"
           p={5}

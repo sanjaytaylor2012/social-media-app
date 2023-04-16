@@ -18,7 +18,7 @@ const NavBar: React.FC = () => {
       borderColor="gray.300"
       width={["100%", "50px", "245px"]}
       height={["5vh", "100vh", "100vh"]}
-      justify={{ base: "space-around", sm: "space-around", md: "space-around" }}
+      justify={{ base: "center", sm: "space-around", md: "space-around" }}
       mr={{ base: "0vw", sm: "12vw", md: "5vw" }}
       position={{ base: "sticky" }}
       bottom={0}

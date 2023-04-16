@@ -12,7 +12,7 @@ const SignUp: React.FC<SignUpProps> = ({ setLoginState }) => {
       <Flex
         direction="column"
         align="center"
-        width="400px"
+        width={{ base: "350px", sm: "400px" }}
         border="1px solid"
         borderColor="gray.300"
         pt={4}
@@ -54,7 +54,7 @@ const SignUp: React.FC<SignUpProps> = ({ setLoginState }) => {
       <Flex
         mt={4}
         justify="center"
-        width="400px"
+        width={{ base: "350px", sm: "400px" }}
         border="1px solid"
         borderColor="gray.300"
         p={5}
