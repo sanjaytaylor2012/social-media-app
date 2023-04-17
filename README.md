@@ -9,7 +9,7 @@ Log in with:
 username: test@gmail.com
 password: test123
 
-for a look at an already setup profile!
+for a look at an already setup profile, or create your own account!
 
 Note: this site is not optimized for mobile yet, so it will not look right on a phone.
 Also, this is still in development and will have some bugs.
@@ -28,7 +28,7 @@ Since coming to college, I have been more disconnected from my family than ever.
 ## What is the Instagram Clone?
 This is an (almost) full featured Instagram clone that I built on my own, from scratch. Some of its features include post creation and management, account management, post commenting, post liking, and more. Also, there the site is very responsive with different views for mobile and desktop which leads to a responsive feel and usability from any kind of device.
 
-## How we built it
+## How I built it
 The frontend of the site was created with Next.js, a React.js metaframework. I utilized Chakra UI to build out the CSS of the site and provide styling. Recoil.js was used for a global state management. Also, the whole thing was written in Typescript. The frontend is deployed with Vercel. The backend is provided through Google Firebase. I utilized Firebase Auth for secure user authenticaion, Firebase Firestore (a non-relational database) for storage of post, comment, and user objects. Firebase Storage was used for image storage. I implemented Cloud Functions to provide some advanced backend functionality such as storing user objects apart from the Firebase Auth user objects.
 
 ## Challenges
