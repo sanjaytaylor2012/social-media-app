@@ -66,7 +66,6 @@ const ViewLikesModal: React.FC<ViewLikesModalProps> = ({
                     variant="login"
                     onClick={() => {
                       router.push(`/${item.name}`);
-                      router.reload();
                     }}
                   >
                     View Profile
