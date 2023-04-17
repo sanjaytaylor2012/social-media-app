@@ -1,34 +1,31 @@
 import { Post } from "@/atoms/postAtom";
 import { auth } from "@/firebase/clientApp";
-import MobileCommentsModal from "@/Modal/Profile/MobilePostModal.tsx/MobileCommentsModal";
-import PostModal from "@/Modal/Profile/PostModal/PostModal";
-import ViewLikesModal from "@/Modal/Profile/PostModal/ViewLikesModal";
-import { Flex, Divider, Icon, Text, Stack } from "@chakra-ui/react";
-import moment from "moment";
-import React, { useEffect, useState } from "react";
+import { Flex, Icon, Stack, Text } from "@chakra-ui/react";
+import { useState, useEffect } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { AiFillHeart } from "react-icons/ai";
-import { AiOutlineHeart } from "react-icons/ai";
+import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
 import { TbMessageCircle2 } from "react-icons/tb";
-import { useRecoilState } from "recoil";
+import PostModal from "../PostModal/PostModal";
+import ViewLikesModal from "../PostModal/ViewLikesModal";
 
-type HomeScreenPostInfoSectionProps = {
+type MobilePostInfoSectionProps = {
   item: Post;
   onLike: () => Promise<void>;
   onUnLike: () => Promise<void>;
   loading: boolean;
+  setOpenComments: (input: boolean) => void;
 };
 
-const HomeScreenPostInfoSection: React.FC<HomeScreenPostInfoSectionProps> = ({
+const MobilePostInfoSection: React.FC<MobilePostInfoSectionProps> = ({
   item,
   onLike,
   onUnLike,
+  setOpenComments,
 }) => {
   const [user] = useAuthState(auth);
   const [open, setOpen] = useState(false);
   const [openPostModal, setOpenPostModal] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
-  const [openMobileComments, setOpenMobileComments] = useState(false);
 
   useEffect(() => {
     if (item.likeProfiles) {
@@ -76,7 +73,7 @@ const HomeScreenPostInfoSection: React.FC<HomeScreenPostInfoSectionProps> = ({
           as={TbMessageCircle2}
           _hover={{ color: "gray.300" }}
           onClick={() => {
-            setOpenPostModal(true);
+            setOpenComments(true);
           }}
         />
       </Flex>
@@ -121,13 +118,12 @@ const HomeScreenPostInfoSection: React.FC<HomeScreenPostInfoSectionProps> = ({
       {item.comments?.length === 0 ? (
         <Text
           ml={{ base: 2, sm: 0, md: 0 }}
-          display={{ base: "none", sm: "flex" }}
           cursor="pointer"
           _hover={{ color: "gray.400" }}
           color="gray.500"
           onClick={() => {
             // getComments(item.creatorDisplayName);
-            setOpenPostModal(true);
+            setOpenComments(true);
           }}
         >
           Add a comment
@@ -135,43 +131,12 @@ const HomeScreenPostInfoSection: React.FC<HomeScreenPostInfoSectionProps> = ({
       ) : (
         <Text
           ml={{ base: 2, sm: 0, md: 0 }}
-          display={{ base: "none", sm: "flex" }}
           cursor="pointer"
           _hover={{ color: "gray.400" }}
           color="gray.500"
           onClick={() => {
             // getComments(item.creatorDisplayName);
-            setOpenPostModal(true);
-          }}
-        >
-          View all comments
-        </Text>
-      )}
-
-      {item.comments?.length === 0 ? (
-        <Text
-          ml={{ base: 2, sm: 0, md: 0 }}
-          display={{ base: "flex", sm: "none" }}
-          cursor="pointer"
-          _hover={{ color: "gray.400" }}
-          color="gray.500"
-          onClick={() => {
-            // getComments(item.creatorDisplayName);
-            setOpenMobileComments(true);
-          }}
-        >
-          Add a comment
-        </Text>
-      ) : (
-        <Text
-          ml={{ base: 2, sm: 0, md: 0 }}
-          display={{ base: "flex", sm: "none" }}
-          cursor="pointer"
-          _hover={{ color: "gray.400" }}
-          color="gray.500"
-          onClick={() => {
-            // getComments(item.creatorDisplayName);
-            setOpenMobileComments(true);
+            setOpenComments(true);
           }}
         >
           View all comments
@@ -245,12 +210,7 @@ const HomeScreenPostInfoSection: React.FC<HomeScreenPostInfoSectionProps> = ({
 
       <ViewLikesModal item={item} open={open} setOpen={setOpen} />
       <PostModal item={item} open={openPostModal} setOpen={setOpenPostModal} />
-      <MobileCommentsModal
-        item={item}
-        isOpen={openMobileComments}
-        setClose={setOpenMobileComments}
-      />
     </Flex>
   );
 };
-export default HomeScreenPostInfoSection;
+export default MobilePostInfoSection;
