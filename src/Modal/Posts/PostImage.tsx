@@ -73,6 +73,8 @@ const PostImage: React.FC<PostImageProps> = ({
       createdAt: serverTimestamp() as Timestamp,
       likes: 0,
       id: id,
+      likeProfiles: [],
+      comments: [],
     };
 
     try {
@@ -80,16 +82,7 @@ const PostImage: React.FC<PostImageProps> = ({
 
       const batch = writeBatch(firestore);
 
-      const userDoc = await getDoc(
-        doc(firestore, `users/${user!.email!.split("@")[0]}`)
-      );
-
-      console.log(userDoc.data());
-
-      const postDocRef = doc(
-        firestore,
-        `users/${user!.email!.split("@")[0]}/posts/${id}`
-      );
+      const postDocRef = doc(firestore, `posts/${id}`);
       batch.set(postDocRef, newPost);
 
       await batch.commit();
@@ -102,6 +95,10 @@ const PostImage: React.FC<PostImageProps> = ({
         imageURL: downloadURL,
       });
 
+      const userDoc = await getDoc(
+        doc(firestore, `users/${user!.email!.split("@")[0]}`)
+      );
+
       await updateDoc(postDocRef, {
         creatorProfilePic: userDoc!.data()!.profilePic,
       });
@@ -111,46 +108,6 @@ const PostImage: React.FC<PostImageProps> = ({
       await updateDoc(docRef, {
         numPosts: increment(1),
       });
-
-      //updating follower home screens with new post
-
-      const userFollowsRef = collection(
-        firestore,
-        `users/${user!.email!.split("@")[0]}/followerProfiles`
-      );
-
-      const userFollows = await getDocs(userFollowsRef);
-
-      const userFollowDocs = userFollows.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-
-      const updatePost: Post = {
-        creatorId: user!.uid,
-        creatorDisplayName: user!.email!.split("@")[0],
-        body: caption,
-        numberOfComments: 0,
-        createdAt: serverTimestamp() as Timestamp,
-        likes: 0,
-        id: id,
-        imageURL: downloadURL,
-        creatorProfilePic: userDoc!.data()!.profilePic,
-      };
-
-      userFollowDocs.forEach(async (item) => {
-        const newPostRef = doc(
-          firestore,
-          `users/${item.id}/homeScreenPosts/${id}`
-        );
-
-        await setDoc(newPostRef, updatePost);
-      });
-
-      // setCurrentPostState((prev) => ({
-      //   ...prev,
-      //   posts: [...prev.posts, userPostDocs[1] as Post],
-      // }));
 
       router.reload();
     } catch (error: any) {

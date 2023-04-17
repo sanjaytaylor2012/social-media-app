@@ -1,6 +1,6 @@
 import { Comment, Post, postState } from "@/atoms/postAtom";
 import { UserType } from "@/atoms/userAtom";
-import { firestore, storage } from "@/firebase/clientApp";
+import { auth, firestore, storage } from "@/firebase/clientApp";
 import usePost from "@/hooks/usePost";
 import useProfile from "@/hooks/useProfile";
 import {
@@ -26,6 +26,7 @@ import {
 import { deleteObject, ref } from "firebase/storage";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
+import { useAuthState } from "react-firebase-hooks/auth";
 import { useRecoilState } from "recoil";
 
 type DeleteCommentModalProps = {
@@ -42,25 +43,39 @@ const DeleteCommentModal: React.FC<DeleteCommentModalProps> = ({
   post,
 }) => {
   const router = useRouter();
+  const [user] = useAuthState(auth);
   const [loading, setLoading] = useState(false);
 
-  const { getComments } = usePost(post);
+  const { setCurrentPostState, currentPostState } = usePost(post);
 
   const handleDeleteComment = async () => {
     try {
       setLoading(true);
       const batch = writeBatch(firestore);
 
-      batch.delete(
-        doc(
-          firestore,
-          `users/${post.creatorDisplayName}/posts/${post.id}/comments/${comment.id}`
-        )
-      );
+      batch.delete(doc(firestore, `posts/${post.id}/comments/${comment.id}`));
 
       batch.commit();
 
-      getComments(post.creatorDisplayName);
+      const updatedPosts = currentPostState.posts.map((postItem) => {
+        if (postItem.id === post.id) {
+          const updatedComments = postItem.comments.filter((commentcheck) => {
+            commentcheck.id !== comment.id;
+          });
+          const updatedPost = {
+            ...postItem,
+            comments: updatedComments,
+          };
+          return updatedPost;
+        } else {
+          return postItem;
+        }
+      });
+
+      setCurrentPostState((prev) => ({
+        ...prev,
+        posts: updatedPosts,
+      }));
 
       setLoading(false);
       setOpen(false);

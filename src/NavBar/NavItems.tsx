@@ -81,7 +81,7 @@ const NavItems: React.FC<NavItemsProps> = () => {
   return (
     <>
       <Stack
-        spacing={{ base: 0, sm: 5, md: 5 }}
+        spacing={{ base: 10, sm: 5, md: 5 }}
         direction={{ base: "row", sm: "column", md: "column" }}
         align="center"
       >

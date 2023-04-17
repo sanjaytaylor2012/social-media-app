@@ -1,4 +1,4 @@
-import { CommentState, Post } from "@/atoms/postAtom";
+import { Post } from "@/atoms/postAtom";
 import { auth } from "@/firebase/clientApp";
 import { Flex, Divider, Icon, Text } from "@chakra-ui/react";
 import moment from "moment";
@@ -12,8 +12,8 @@ import ViewLikesModal from "./ViewLikesModal";
 
 type PostInfoSectionProps = {
   item: Post;
-  onLike: (postId: string) => Promise<void>;
-  onUnLike: (postId: string) => Promise<void>;
+  onLike: () => Promise<void>;
+  onUnLike: () => Promise<void>;
   loading: boolean;
 };
 
@@ -23,14 +23,11 @@ const PostInfoSection: React.FC<PostInfoSectionProps> = ({
   onUnLike,
   loading,
 }) => {
-  const [currentCommentState, setCurrentCommentState] =
-    useRecoilState(CommentState);
-
   const [user] = useAuthState(auth);
 
   const [open, setOpen] = useState(false);
 
-  const isLiked = !!currentCommentState.profileLikes.find(
+  const isLiked = !!item.likeProfiles.find(
     (item) => item.name === user!.email!.split("@")[0]
   );
 
@@ -45,7 +42,7 @@ const PostInfoSection: React.FC<PostInfoSectionProps> = ({
             color="red.500"
             as={AiFillHeart}
             mr={4}
-            onClick={() => onUnLike(item.id as string)}
+            onClick={() => onUnLike()}
           />
         ) : (
           <Icon
@@ -53,39 +50,38 @@ const PostInfoSection: React.FC<PostInfoSectionProps> = ({
             mr={4}
             fontSize={30}
             as={AiOutlineHeart}
-            onClick={() => onLike(item.id as string)}
+            onClick={() => onLike()}
           />
         )}
 
         <Icon mb="20px" fontSize={30} as={TbMessageCircle2} />
       </Flex>
 
-      {currentCommentState.profileLikes.length === 1 && (
+      {item.likeProfiles.length === 1 && (
         <Text
           fontWeight={600}
           cursor="pointer"
           _hover={{ color: "gray.300" }}
           onClick={() => setOpen(true)}
         >
-          Liked by {currentCommentState.profileLikes[0].name}
+          Liked by {item.likeProfiles[0].name}
         </Text>
       )}
-      {currentCommentState.profileLikes.length > 1 && (
+      {item.likeProfiles.length > 1 && (
         <Text
           fontWeight={600}
           cursor="pointer"
           _hover={{ color: "gray.300" }}
           onClick={() => setOpen(true)}
         >
-          Liked by {currentCommentState.profileLikes[0].name} and{" "}
-          {currentCommentState.likes - 1} others
+          Liked by {item.likeProfiles[0].name} and {item.likes - 1} others
         </Text>
       )}
 
       <Text fontSize="10pt" color="gray.400">
         {moment(new Date(item?.createdAt?.seconds * 1000)).fromNow()}
       </Text>
-      <ViewLikesModal open={open} setOpen={setOpen} />
+      <ViewLikesModal item={item} open={open} setOpen={setOpen} />
     </Flex>
   );
 };

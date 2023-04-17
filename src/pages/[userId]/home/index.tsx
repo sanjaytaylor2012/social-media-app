@@ -1,5 +1,5 @@
-import { homeScreenPostState, Post, postState } from "@/atoms/postAtom";
-import { UserType } from "@/atoms/userAtom";
+import { Like, Post, postState } from "@/atoms/postAtom";
+import { currentUserStates, UserType } from "@/atoms/userAtom";
 import { auth, firestore } from "@/firebase/clientApp";
 import PostItem from "@/HomeScreen/PostItem";
 import SideBarItems from "@/HomeScreen/SideBarItems";
@@ -20,6 +20,9 @@ import {
   getDoc,
   where,
   Timestamp,
+  limit,
+  DocumentData,
+  QuerySnapshot,
 } from "firebase/firestore";
 import moment from "moment";
 import { GetServerSidePropsContext } from "next";
@@ -34,45 +37,130 @@ import { isContext } from "vm";
 // type indexProps = { postsData: Post[] };
 
 const index: React.FC = ({}) => {
-  const [currentPostState, setCurrentPostState] =
-    useRecoilState(homeScreenPostState);
+  const [currentPostState, setCurrentPostState] = useRecoilState(postState);
+  const [currentUserProfileState, setCurrentUserProfileState] =
+    useRecoilState(currentUserStates);
+  const [returned, setReturned] = useState(false);
+
   const [user] = useAuthState(auth);
 
   const [profilePicUser, setProfilePicUser] = useState("");
 
   const getPosts = async () => {
     try {
-      // get posts from this community
-      const postsQuery = query(
+      const userDocRef = doc(firestore, `users/${user!.email!.split("@")[0]}`);
+      const userDoc = await getDoc(userDocRef);
+      setProfilePicUser(userDoc!.data()!.profilePic);
+
+      const followingProfiles = await getDocs(
         collection(
           firestore,
-          `users/${user!.email!.split("@")[0]}/homeScreenPosts`
-        ),
-        orderBy("createdAt", "desc")
+          `users/${user!.email!.split("@")[0]}/followingProfiles`
+        )
       );
 
-      const postDocs = await getDocs(postsQuery);
+      const followingProfileDocs = followingProfiles.docs.map((doc) => ({
+        ...doc.data(),
+      }));
 
-      //store in post state
-      const posts = postDocs.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+      let postPromises: Array<Promise<QuerySnapshot<DocumentData>>> = [];
+      [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].forEach((index) => {
+        if (!followingProfileDocs[index]) return;
+
+        postPromises.push(
+          getDocs(
+            query(
+              collection(firestore, `posts`),
+              where(
+                "creatorDisplayName",
+                "==",
+                followingProfileDocs[index].name
+              ),
+              orderBy("createdAt", "desc"),
+              limit(10)
+            )
+          )
+        );
+      });
+
+      const queryResults = await Promise.all(postPromises);
+
+      const feedPosts: Post[] = [];
+
+      queryResults.forEach((result) => {
+        const posts = result.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        })) as Post[];
+        feedPosts.push(...posts);
+      });
+
+      console.log(currentPostState);
+
+      let likePromises: Array<Promise<QuerySnapshot<DocumentData>>> = [];
+      feedPosts.forEach((post) => {
+        likePromises.push(
+          getDocs(collection(firestore, `posts/${post.id}/likeProfiles`))
+        );
+      });
+
+      const likeResults = await Promise.all(likePromises);
+
+      const feedPostLikes: any = [];
+
+      likeResults.forEach((result) => {
+        const likes = result.docs.map((doc) => ({
+          ...doc.data(),
+        }));
+        feedPostLikes.push(likes);
+      });
+
+      let commentPromises: Array<Promise<QuerySnapshot<DocumentData>>> = [];
+      feedPosts.forEach((post) => {
+        commentPromises.push(
+          getDocs(collection(firestore, `posts/${post.id}/comments`))
+        );
+      });
+
+      const commentResults = await Promise.all(commentPromises);
+
+      const feedPostComments: any = [];
+
+      commentResults.forEach((result) => {
+        const comments = result.docs.map((doc) => ({
+          ...doc.data(),
+        }));
+        feedPostComments.push(comments);
+
+        console.log(comments);
+      });
+
+      let x = -1;
+      const updatedPosts = feedPosts.map((post) => {
+        x++;
+        const updatedComments = feedPostComments[x];
+        const updatedLikes = feedPostLikes[x];
+        const updatedPost: Post = {
+          ...post,
+          comments: updatedComments,
+          likeProfiles: updatedLikes,
+        };
+        console.log(updatedPost);
+        return updatedPost;
+      });
+
+      const sortedDocs = updatedPosts.sort((a, b) => {
+        return b.createdAt.seconds - a.createdAt.seconds;
+      });
 
       setCurrentPostState((prev) => ({
         ...prev,
-        posts: posts as Post[],
+        posts: sortedDocs,
       }));
-
-      const userDocRef = doc(firestore, `users/${user!.email!.split("@")[0]}`);
-
-      const userDoc = await getDoc(userDocRef);
-
-      setProfilePicUser(userDoc!.data()!.profilePic);
     } catch (error: any) {
-      console.log(error.message);
+      console.log(error);
     }
   };
-
-  const { getMyFollows, currentUserProfileState } = useProfile();
-  const router = useRouter();
 
   // useEffect(() => {
   //   // if ((router.query.userId as string) != user!.email!.split("@")[0]) {
@@ -87,7 +175,6 @@ const index: React.FC = ({}) => {
 
   useEffect(() => {
     getPosts();
-    getMyFollows();
   }, []);
 
   return (
@@ -97,7 +184,7 @@ const index: React.FC = ({}) => {
           <Text>Follow someone to see posts!</Text>
         )}
 
-        <Stack>
+        <Stack mb={20}>
           {currentPostState.posts.map((item: any) => {
             return (
               <>
@@ -121,10 +208,10 @@ const index: React.FC = ({}) => {
           // border="1px solid"
         >
           <SwitchAccountIcon profilePic={profilePicUser} user={user} />
-          <Text fontSize={{ base: "0px", md: "12pt" }}>Following</Text>
+          {/* <Text fontSize={{ base: "0px", md: "12pt" }}>Following</Text>
           {currentUserProfileState.myFollowings.map((item) => {
             return <SideBarItems key={uuidv4()} item={item} />;
-          })}
+          })} */}
         </Stack>
       </>
     </PageContent>

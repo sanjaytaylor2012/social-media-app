@@ -50,9 +50,7 @@ const DeletePostModal: React.FC<DeletePostModalProps> = ({
       const batch = writeBatch(firestore);
 
       console.log(item.id);
-      batch.delete(
-        doc(firestore, `users/${user!.email!.split("@")[0]}/posts/${item.id}`)
-      );
+      batch.delete(doc(firestore, `posts/${item.id}`));
 
       const imageRef = ref(storage, `posts/${item.id}/image`);
       deleteObject(imageRef);

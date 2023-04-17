@@ -13,7 +13,7 @@ import PostHeader from "./PostHeader";
 type PostItemProps = { item: Post };
 
 const PostItem: React.FC<PostItemProps> = ({ item }) => {
-  const { getComments, setLoading } = usePost(item);
+  // const { getComments, setLoading } = usePost(item);
   const { onLike, onUnLike, loading } = usePost(item);
 
   return (
@@ -33,7 +33,7 @@ const PostItem: React.FC<PostItemProps> = ({ item }) => {
       />
 
       <HomeScreenPostInfoSection
-        getComments={getComments}
+        // getComments={getComments}
         item={item}
         loading={loading}
         onLike={onLike}

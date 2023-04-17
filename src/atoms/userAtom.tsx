@@ -12,6 +12,22 @@ export interface UserType {
   bio: string;
 }
 
+const defaultUserType: UserType = {
+  displayName: "",
+  uid: "",
+  profilePic: "",
+  email: "",
+  numPosts: 0,
+  followers: 0,
+  following: 0,
+  bio: "",
+};
+
+export const currentUserInfo = atom<UserType>({
+  key: "UserState",
+  default: defaultUserType,
+});
+
 export interface followProfile {
   name: string;
   profilePic?: string;

@@ -1,5 +1,5 @@
-import { Comment, CommentState, Like, Post } from "@/atoms/postAtom";
-import { UserType } from "@/atoms/userAtom";
+import { Comment, Like, Post, postState } from "@/atoms/postAtom";
+import { currentUserStates, UserType } from "@/atoms/userAtom";
 import { auth, firestore } from "@/firebase/clientApp";
 import {
   collection,
@@ -20,22 +20,24 @@ import { useRecoilState } from "recoil";
 import { v4 as uuidv4 } from "uuid";
 
 //userDoc is currently viewed profile
-const usePost = (postObject: Post, userDoc?: UserType | undefined) => {
+const usePost = (postObject: Post) => {
   const [loading, setLoading] = useState(false);
   const [user] = useAuthState(auth);
-  const [commentState, setCommentState] = useRecoilState(CommentState);
+  const [currentPostState, setCurrentPostState] = useRecoilState(postState);
 
-  const addComment = async (comment: string, postId: string) => {
+  const addComment = async (comment: string) => {
     try {
       setLoading(true);
       const batch = writeBatch(firestore);
 
+      //fix so i dont have to call user info every time.
       const CurrentUserRef = doc(
         firestore,
         `users/${user!.email!.split("@")[0]}`
       );
       const currentUser = await getDoc(CurrentUserRef);
       const profilePic = currentUser?.data()?.profilePic;
+
       const id = uuidv4();
 
       const newComment: Comment = {
@@ -48,10 +50,7 @@ const usePost = (postObject: Post, userDoc?: UserType | undefined) => {
       };
 
       batch.set(
-        doc(
-          firestore,
-          `users/${postObject.creatorDisplayName}/posts/${postId}/comments/${id}`
-        ),
+        doc(firestore, `posts/${postObject.id}/comments/${id}`),
         newComment
       );
 
@@ -65,10 +64,29 @@ const usePost = (postObject: Post, userDoc?: UserType | undefined) => {
       //     totalFollowings: prev.totalFollowings,
       //   }));
 
-      setCommentState((prev) => ({
-        ...prev,
+      // setCommentState((prev) => ({
+      //   ...prev,
 
-        comments: [...prev.comments, newComment],
+      //   comments: [...prev.comments, newComment],
+      // }));
+
+      const updatedPosts = currentPostState.posts.map((post) => {
+        if (post.id === postObject.id) {
+          const updatedComments = [...post.comments, newComment];
+
+          const updatedPost = {
+            ...post,
+            comments: updatedComments,
+          };
+          return updatedPost;
+        } else {
+          return post;
+        }
+      });
+
+      setCurrentPostState((prevState) => ({
+        ...prevState,
+        posts: updatedPosts,
       }));
     } catch (error: any) {
       console.log(error.message);
@@ -109,13 +127,13 @@ const usePost = (postObject: Post, userDoc?: UserType | undefined) => {
         ...doc.data(),
       }));
 
-      setCommentState((prev) => ({
-        selectedPost: postObject,
-        profileLikes: currentPostLikes as Like[],
-        comments: snippets as Comment[],
-        // isLiked: isLiked,
-        likes: userLikes,
-      }));
+      // setCommentState((prev) => ({
+      //   selectedPost: postObject,
+      //   profileLikes: currentPostLikes as Like[],
+      //   comments: snippets as Comment[],
+      //   // isLiked: isLiked,
+      //   likes: userLikes,
+      // }));
 
       setLoading(false);
     } catch (error: any) {
@@ -123,10 +141,11 @@ const usePost = (postObject: Post, userDoc?: UserType | undefined) => {
     }
   };
 
-  const onLike = async (postId: string | undefined) => {
+  const onLike = async () => {
     try {
       const batch = writeBatch(firestore);
 
+      //FIX THIS
       const CurrentUserRef = doc(
         firestore,
         `users/${user!.email!.split("@")[0]}`
@@ -139,63 +158,73 @@ const usePost = (postObject: Post, userDoc?: UserType | undefined) => {
         profilePic: profilePic,
       };
 
-      setCommentState((prev) => ({
-        // ...prev,
-        selectedPost: prev.selectedPost,
-        // isLiked: true,
-        profileLikes: [...prev.profileLikes, newLike],
-        likes: prev.likes + 1,
-        comments: [...prev.comments],
-      }));
-
       batch.set(
         doc(
           firestore,
-          `users/${postObject.creatorDisplayName}/posts/${postId}/likes/${
-            user!.email!.split("@")[0]
-          }`
+          `posts/${postObject.id}/likeProfiles/${user!.email!.split("@")[0]}`
         ),
         newLike
       );
 
-      batch.update(
-        doc(
-          firestore,
-          `users/${postObject.creatorDisplayName}/posts/${postId}`
-        ),
-        {
-          likes: increment(1),
-        }
-      );
+      batch.update(doc(firestore, `posts/${postObject.id}`), {
+        likes: increment(1),
+      });
 
       console.log(newLike);
 
       await batch.commit();
 
-      console.log("on like profile Likes", commentState.profileLikes);
+      // console.log("on like profile Likes", commentState.profileLikes);
+
+      const updatedPosts = currentPostState.posts.map((postItem) => {
+        if (postItem.id === postObject.id) {
+          // const updatedLikeProfiles = [...postItem.likeProfiles, newLike];
+          const updatedLikeProfiles = [...postItem.likeProfiles, newLike];
+          const updatedPost = {
+            ...postItem,
+            likeProfiles: updatedLikeProfiles,
+            likes: postItem.likes + 1,
+          };
+          return updatedPost;
+        } else {
+          return postItem;
+        }
+      });
+
+      setCurrentPostState((prev) => ({
+        ...prev,
+        posts: updatedPosts,
+      }));
+
+      // setCommentState((prev) => ({
+      //   // ...prev,
+      //   selectedPost: prev.selectedPost,
+      //   // isLiked: true,
+      //   profileLikes: [...prev.profileLikes, newLike],
+      //   likes: prev.likes + 1,
+      //   comments: [...prev.comments],
+      // }));
     } catch (error: any) {
-      console.log(error.message);
+      console.log(error);
     }
   };
 
-  const onUnLike = async (postId: string | undefined) => {
+  const onUnLike = async () => {
     try {
-      setCommentState((prev) => ({
-        ...prev,
-        profileLikes: prev.profileLikes.filter(
-          (item) => item.name !== user!.email!.split("@")[0]
-        ),
-        likes: prev.likes - 1,
-      }));
+      // setCommentState((prev) => ({
+      //   ...prev,
+      //   profileLikes: prev.profileLikes.filter(
+      //     (item) => item.name !== user!.email!.split("@")[0]
+      //   ),
+      //   likes: prev.likes - 1,
+      // }));
 
       const batch = writeBatch(firestore);
 
       batch.delete(
         doc(
           firestore,
-          `users/${postObject.creatorDisplayName}/posts/${postId}/likes/${
-            user!.email!.split("@")[0]
-          }`
+          `posts/${postObject.id}/likeProfiles/${user!.email!.split("@")[0]}`
         )
       );
 
@@ -204,24 +233,50 @@ const usePost = (postObject: Post, userDoc?: UserType | undefined) => {
       //   { isLiked: false }
       // );
 
-      batch.update(
-        doc(
-          firestore,
-          `users/${postObject.creatorDisplayName}/posts/${postId}`
-        ),
-        {
-          likes: increment(-1),
-        }
-      );
+      batch.update(doc(firestore, `posts/${postObject.id}`), {
+        likes: increment(-1),
+      });
 
       await batch.commit();
 
-      console.log("on unlike profile Likes", commentState.profileLikes);
+      // console.log("on unlike profile Likes", commentState.profileLikes);
+
+      const updatedPosts = currentPostState.posts.map((postItem) => {
+        if (postItem.id === postObject.id) {
+          const updatedLikeProfiles = postItem.likeProfiles.filter(
+            (profile) => {
+              profile.name === user!.email!.split("@")[0];
+            }
+          );
+          const updatedPost = {
+            ...postItem,
+            likeProfiles: updatedLikeProfiles,
+            likes: postItem.likes - 1,
+          };
+          return updatedPost;
+        } else {
+          return postItem;
+        }
+      });
+
+      setCurrentPostState((prev) => ({
+        ...prev,
+        posts: updatedPosts,
+      }));
     } catch (error: any) {
       console.log(error.message);
     }
   };
 
-  return { addComment, setLoading, loading, getComments, onLike, onUnLike };
+  return {
+    addComment,
+    setLoading,
+    loading,
+    getComments,
+    onLike,
+    onUnLike,
+    currentPostState,
+    setCurrentPostState,
+  };
 };
 export default usePost;

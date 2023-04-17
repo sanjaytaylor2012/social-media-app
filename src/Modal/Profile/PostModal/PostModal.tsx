@@ -1,4 +1,4 @@
-import { Comment, CommentState, Post } from "@/atoms/postAtom";
+import { Comment, Post } from "@/atoms/postAtom";
 import { UserType } from "@/atoms/userAtom";
 import usePost from "@/hooks/usePost";
 import useProfile from "@/hooks/useProfile";
@@ -48,7 +48,6 @@ const ViewFollowingModal: React.FC<ViewFollowingModalProps> = ({
 }) => {
   const { addComment, onUnLike, onLike, loading } = usePost(item);
   const [comment, setComment] = useState("");
-  const [commentState, setCommentState] = useRecoilState(CommentState);
 
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
@@ -63,7 +62,7 @@ const ViewFollowingModal: React.FC<ViewFollowingModalProps> = ({
   const handleAddComment = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (comment.length > 0) {
-      await addComment(comment, item.id as string);
+      await addComment(comment);
       setComment("");
       //   event.target.reset();
     }
@@ -104,7 +103,7 @@ const ViewFollowingModal: React.FC<ViewFollowingModalProps> = ({
 
                 {loading === false && (
                   <Stack maxHeight="50vh" overflowX="hidden" overflowY="auto">
-                    {commentState.comments.map((comment: any) => {
+                    {item.comments.map((comment: any) => {
                       return (
                         <CommentItem
                           post={item}
