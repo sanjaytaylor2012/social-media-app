@@ -17,7 +17,7 @@ const PostItem: React.FC<PostItemProps> = ({ item }) => {
   const { onLike, onUnLike, loading } = usePost(item);
 
   return (
-    <Stack mb={10} width={{ base: "100vw", sm: "100%" }}>
+    <Stack width={{ base: "100vw", sm: "100%" }}>
       <PostHeader item={item} />
       <Image
         // onClick={() => {

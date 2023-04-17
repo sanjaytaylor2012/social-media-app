@@ -1,15 +1,12 @@
-import { Like, Post, postState } from "@/atoms/postAtom";
-import { currentUserStates, UserType } from "@/atoms/userAtom";
+import { Post, postState } from "@/atoms/postAtom";
+import { currentUserStates } from "@/atoms/userAtom";
 import { auth, firestore } from "@/firebase/clientApp";
 import PostItem from "@/HomeScreen/PostItem";
 import SideBarItems from "@/HomeScreen/SideBarItems";
 import SwitchAccountIcon from "@/HomeScreen/SwitchAccountIcon";
 import useProfile from "@/hooks/useProfile";
 import PageContent from "@/Layout/PageContent";
-import FollowButtonModal from "@/Modal/Profile/FollowersModal/FollowButtonModal";
-import ViewLikesModal from "@/Modal/Profile/PostModal/ViewLikesModal";
-import GridPostItem from "@/Profile/GridPostItem";
-import { Stack, Flex, Image, Icon, Button, Text } from "@chakra-ui/react";
+import { Stack, Text } from "@chakra-ui/react";
 import { uuidv4 } from "@firebase/util";
 import {
   query,
@@ -19,20 +16,15 @@ import {
   doc,
   getDoc,
   where,
-  Timestamp,
   limit,
   DocumentData,
   QuerySnapshot,
 } from "firebase/firestore";
-import moment from "moment";
-import { GetServerSidePropsContext } from "next";
-import { useRouter } from "next/router";
+
 import React, { useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { AiOutlineInstagram } from "react-icons/ai";
 import { useRecoilState } from "recoil";
-import safeJsonStringify from "safe-json-stringify";
-import { isContext } from "vm";
 
 // type indexProps = { postsData: Post[] };
 
@@ -40,8 +32,7 @@ const index: React.FC = ({}) => {
   const [currentPostState, setCurrentPostState] = useRecoilState(postState);
   const [currentUserProfileState, setCurrentUserProfileState] =
     useRecoilState(currentUserStates);
-  const [returned, setReturned] = useState(false);
-
+  const { getMyFollows } = useProfile();
   const [user] = useAuthState(auth);
 
   const [profilePicUser, setProfilePicUser] = useState("");
@@ -95,8 +86,6 @@ const index: React.FC = ({}) => {
         feedPosts.push(...posts);
       });
 
-      console.log(currentPostState);
-
       let likePromises: Array<Promise<QuerySnapshot<DocumentData>>> = [];
       feedPosts.forEach((post) => {
         likePromises.push(
@@ -105,7 +94,6 @@ const index: React.FC = ({}) => {
       });
 
       const likeResults = await Promise.all(likePromises);
-
       const feedPostLikes: any = [];
 
       likeResults.forEach((result) => {
@@ -123,7 +111,6 @@ const index: React.FC = ({}) => {
       });
 
       const commentResults = await Promise.all(commentPromises);
-
       const feedPostComments: any = [];
 
       commentResults.forEach((result) => {
@@ -131,8 +118,6 @@ const index: React.FC = ({}) => {
           ...doc.data(),
         }));
         feedPostComments.push(comments);
-
-        console.log(comments);
       });
 
       let x = -1;
@@ -145,7 +130,6 @@ const index: React.FC = ({}) => {
           comments: updatedComments,
           likeProfiles: updatedLikes,
         };
-        console.log(updatedPost);
         return updatedPost;
       });
 
@@ -175,13 +159,16 @@ const index: React.FC = ({}) => {
 
   useEffect(() => {
     getPosts();
+    getMyFollows();
   }, []);
 
   return (
     <PageContent>
       <>
         {currentPostState.posts.length == 0 && (
-          <Text>Follow someone to see posts!</Text>
+          <Text>
+            Your friends haven't posted yet. Follow more people to see posts!
+          </Text>
         )}
 
         <Stack mb={20}>
@@ -208,10 +195,10 @@ const index: React.FC = ({}) => {
           // border="1px solid"
         >
           <SwitchAccountIcon profilePic={profilePicUser} user={user} />
-          {/* <Text fontSize={{ base: "0px", md: "12pt" }}>Following</Text>
+          <Text fontSize={{ base: "0px", md: "12pt" }}>Following</Text>
           {currentUserProfileState.myFollowings.map((item) => {
             return <SideBarItems key={uuidv4()} item={item} />;
-          })} */}
+          })}
         </Stack>
       </>
     </PageContent>

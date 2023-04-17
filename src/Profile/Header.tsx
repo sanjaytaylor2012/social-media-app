@@ -28,24 +28,46 @@ const Header: React.FC<HeaderProps> = ({ userDoc }) => {
   // }, []);
 
   return (
-    <Flex align="center" mt={6} mb={4}>
-      {userDoc.profilePic === "" ? (
-        <Icon fontSize={150} as={AiOutlineInstagram} mr={20} />
-      ) : (
-        <Image
-          objectFit="cover"
-          borderRadius="full"
-          boxSize="150px"
-          src={userDoc.profilePic}
-          mr={5}
-        />
-      )}
+    <Flex align={{ base: "top", sm: "center" }} ml={{ base: 5 }} mt={6} mb={4}>
+      <Stack mr={5} align="center">
+        {userDoc.profilePic === "" ? (
+          <Icon fontSize={150} as={AiOutlineInstagram} mr={20} />
+        ) : (
+          <Image
+            objectFit="cover"
+            borderRadius="full"
+            boxSize={{ base: "80px", sm: "150px" }}
+            src={userDoc.profilePic}
+          />
+        )}
+        {userDoc.displayName === user!.email!.split("@")[0] ? (
+          <Button
+            onClick={() => {
+              router.push(`/${userDoc.displayName}/account`);
+            }}
+            _hover={{ bg: "gray.300" }}
+            color="black"
+            bg="gray.200"
+            height="30px"
+            width="90px"
+            variant="login"
+            display={{ base: "flex", md: "none" }}
+          >
+            Edit Profile
+          </Button>
+        ) : (
+          <Flex display={{ base: "flex", md: "none" }}>
+            <FollowButton displayName={userDoc.displayName} userDoc={userDoc} />
+          </Flex>
+        )}
+      </Stack>
 
       <Stack>
         <Flex align="center" mb={4}>
           <Text fontSize="20pt" mr={5}>
             {userDoc.displayName}
           </Text>
+
           {userDoc.displayName === user!.email!.split("@")[0] ? (
             <Button
               onClick={() => {
@@ -56,24 +78,36 @@ const Header: React.FC<HeaderProps> = ({ userDoc }) => {
               bg="gray.200"
               height="30px"
               variant="login"
+              display={{ base: "none", md: "flex" }}
             >
               Edit Profile
             </Button>
           ) : (
-            <FollowButton displayName={userDoc.displayName} userDoc={userDoc} />
+            <Flex display={{ base: "none", md: "flex" }}>
+              <FollowButton
+                displayName={userDoc.displayName}
+                userDoc={userDoc}
+              />
+            </Flex>
           )}
         </Flex>
 
         <Flex>
-          <Flex mr={6}>
+          <Flex
+            align={{ base: "center" }}
+            direction={{ base: "column", sm: "row" }}
+            mr={6}
+          >
             <Text fontWeight={600} mr={2}>
-              {postStateValue.numPosts}
+              {userDoc.numPosts}
             </Text>
             <Text> posts</Text>
           </Flex>
 
           <Flex
             mr={6}
+            align={{ base: "center" }}
+            direction={{ base: "column", sm: "row" }}
             _hover={{ color: "gray.400" }}
             onClick={() => setOpenFollowers(true)}
             cursor="pointer"
@@ -87,6 +121,8 @@ const Header: React.FC<HeaderProps> = ({ userDoc }) => {
 
           {userDoc.displayName === user!.email!.split("@")[0] ? (
             <Flex
+              align={{ base: "center" }}
+              direction={{ base: "column", sm: "row" }}
               _hover={{ color: "gray.400" }}
               cursor="pointer"
               mr={6}
@@ -101,7 +137,9 @@ const Header: React.FC<HeaderProps> = ({ userDoc }) => {
           ) : (
             <Flex
               cursor="pointer"
+              align={{ base: "center" }}
               _hover={{ color: "gray.400" }}
+              direction={{ base: "column", sm: "row" }}
               onClick={() => {
                 setOpen(true);
               }}
@@ -116,7 +154,7 @@ const Header: React.FC<HeaderProps> = ({ userDoc }) => {
         {userDoc.bio === "" ? (
           <Text mt={4}>{userDoc.displayName}</Text>
         ) : (
-          <Text mt={4} mr={3} maxWidth="40vw">
+          <Text mt={4} mr={3} maxWidth={{ base: "70vw", sm: "40vw" }}>
             {userDoc.bio}
           </Text>
         )}

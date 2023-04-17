@@ -21,6 +21,10 @@ import {
   getDocs,
   doc,
   getDoc,
+  DocumentData,
+  limit,
+  QuerySnapshot,
+  where,
 } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
@@ -37,33 +41,78 @@ type PostsProps = {
 };
 
 const Posts: React.FC<PostsProps> = ({ userDoc }) => {
-  const [postStateValue, setPostStateValue] = useRecoilState(postState);
   const [user] = useAuthState(auth);
   const [loading, setLoading] = useState(false);
+  const [currentPostState, setCurrentPostState] = useRecoilState(postState);
 
   const getPosts = async () => {
     try {
-      setLoading(true);
-      // get posts from this community
-      const postsQuery = query(
-        collection(firestore, `users/${userDoc.displayName}/posts`),
-        orderBy("createdAt", "desc")
+      const userPosts = await getDocs(
+        query(
+          collection(firestore, `posts`),
+          where("creatorDisplayName", "==", userDoc.displayName),
+          orderBy("createdAt", "desc")
+        )
       );
 
-      const postDocs = await getDocs(postsQuery);
+      const posts = userPosts.docs.map((doc) => ({
+        ...doc.data(),
+      })) as Post[];
 
-      //store in post state
-      const posts = postDocs.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-      // console.log(posts);
+      let likePromises: Array<Promise<QuerySnapshot<DocumentData>>> = [];
+      posts.forEach((post) => {
+        likePromises.push(
+          getDocs(collection(firestore, `posts/${post.id}/likeProfiles`))
+        );
+      });
 
-      const userDocument = await getDoc(
-        doc(firestore, `users/${userDoc.displayName}`)
-      );
+      const likeResults = await Promise.all(likePromises);
+      const feedPostLikes: any = [];
 
-      setPostStateValue((prev) => ({
+      likeResults.forEach((result) => {
+        const likes = result.docs.map((doc) => ({
+          ...doc.data(),
+        }));
+        feedPostLikes.push(likes);
+      });
+
+      let commentPromises: Array<Promise<QuerySnapshot<DocumentData>>> = [];
+      posts.forEach((post) => {
+        commentPromises.push(
+          getDocs(collection(firestore, `posts/${post.id}/comments`))
+        );
+      });
+
+      const commentResults = await Promise.all(commentPromises);
+      const feedPostComments: any = [];
+
+      commentResults.forEach((result) => {
+        const comments = result.docs.map((doc) => ({
+          ...doc.data(),
+        }));
+        feedPostComments.push(comments);
+      });
+
+      let x = -1;
+      const updatedPosts = posts.map((post) => {
+        x++;
+        const updatedComments = feedPostComments[x];
+        const updatedLikes = feedPostLikes[x];
+        const updatedPost: Post = {
+          ...post,
+          comments: updatedComments,
+          likeProfiles: updatedLikes,
+        };
+        return updatedPost;
+      });
+
+      const sortedDocs = updatedPosts.sort((a, b) => {
+        return b.createdAt.seconds - a.createdAt.seconds;
+      });
+
+      setCurrentPostState((prev) => ({
         ...prev,
-        posts: posts as Post[],
-        numPosts: userDocument!.data()!.numPosts,
+        posts: sortedDocs,
       }));
     } catch (error: any) {
       console.log("getPosts error: ", error.message);
@@ -100,7 +149,7 @@ const Posts: React.FC<PostsProps> = ({ userDoc }) => {
           columns={3}
           spacing={{ base: 0.5, md: 7 }}
         >
-          {postStateValue.posts.map((item) => {
+          {currentPostState.posts.map((item) => {
             return <GridPostItem userDoc={userDoc} key={item.id} item={item} />;
           })}
         </SimpleGrid>
