@@ -6,6 +6,7 @@ import DeletePostModal from "@/Modal/Profile/PostModal/DeletePostModal/DeletePos
 import PostInfoSection from "@/Modal/Profile/PostModal/PostInfoSection";
 import { Flex, Stack, Divider, Image, Text, Icon } from "@chakra-ui/react";
 import moment from "moment";
+import { useRouter } from "next/router";
 import React, { useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { AiOutlineInstagram } from "react-icons/ai";
@@ -16,6 +17,7 @@ type PostHeaderProps = { item: Post };
 const PostHeader: React.FC<PostHeaderProps> = ({ item }) => {
   const [open, setOpen] = useState(false);
   const [user] = useAuthState(auth);
+  const router = useRouter();
 
   return (
     <>
@@ -32,7 +34,15 @@ const PostHeader: React.FC<PostHeaderProps> = ({ item }) => {
               mr={2}
             />
           )}
-          <Text fontWeight="600" mr={2}>
+          <Text
+            _hover={{ color: "gray.400" }}
+            fontWeight="600"
+            cursor="pointer"
+            mr={2}
+            onClick={() => {
+              router.push(`/${item.creatorDisplayName}`);
+            }}
+          >
             {item.creatorDisplayName}
           </Text>
           <Text fontSize="10pt" color="gray.400">
