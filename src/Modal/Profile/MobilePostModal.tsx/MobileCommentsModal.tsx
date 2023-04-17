@@ -12,6 +12,7 @@ import {
   Button,
   Stack,
   Flex,
+  Box,
 } from "@chakra-ui/react";
 import React, { useState } from "react";
 import CommentInput from "../PostModal/CommentInput";
@@ -55,11 +56,13 @@ const MobileCommentsModal: React.FC<MobileCommentsModalProps> = ({
                 return <CommentItem comment={comment} post={item} />;
               })}
             </Stack>
-            <CommentInput
-              loading={loading}
-              setComment={setComment}
-              handleAddComment={handleAddComment}
-            />
+            <Box position="fixed" width="90%" bottom={0}>
+              <CommentInput
+                loading={loading}
+                setComment={setComment}
+                handleAddComment={handleAddComment}
+              />
+            </Box>
           </Stack>
         </ModalBody>
       </ModalContent>
