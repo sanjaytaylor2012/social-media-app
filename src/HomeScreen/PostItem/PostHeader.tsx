@@ -1,4 +1,5 @@
 import { Post } from "@/atoms/postAtom";
+import { NavBarState } from "@/atoms/SearchBarAtom";
 import { UserType } from "@/atoms/userAtom";
 import { auth } from "@/firebase/clientApp";
 import usePost from "@/hooks/usePost";
@@ -12,6 +13,7 @@ import React, { useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { AiOutlineInstagram } from "react-icons/ai";
 import { FiMenu } from "react-icons/fi";
+import { useRecoilState } from "recoil";
 
 type PostHeaderProps = {
   user: User | null | undefined;
@@ -20,6 +22,8 @@ type PostHeaderProps = {
 };
 
 const PostHeader: React.FC<PostHeaderProps> = ({ item, router }) => {
+  const [navState, setNavState] = useRecoilState(NavBarState);
+
   return (
     <>
       <Flex ml={{ base: 2, sm: 0 }} align="center" justify="space-between">
@@ -41,6 +45,11 @@ const PostHeader: React.FC<PostHeaderProps> = ({ item, router }) => {
             cursor="pointer"
             mr={2}
             onClick={() => {
+              setNavState({
+                selectedTab: "Profile",
+                previousTab: "Home",
+              });
+
               router.push(`/${item.creatorDisplayName}`);
             }}
           >
