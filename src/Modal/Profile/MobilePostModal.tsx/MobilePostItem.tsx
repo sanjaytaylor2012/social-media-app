@@ -60,6 +60,7 @@ const MobilePostItem: React.FC<MobilePostItemProps> = ({
         onLike={onLike}
         onUnLike={onUnLike}
         setOpenComments={setOpenComments}
+        router={router}
       />
       <MobileCommentsModal
         item={item}

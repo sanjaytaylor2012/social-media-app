@@ -1,11 +1,14 @@
 import { Post } from "@/atoms/postAtom";
+import { NavBarState } from "@/atoms/SearchBarAtom";
 import { auth } from "@/firebase/clientApp";
 import { Flex, Icon, Stack, Text } from "@chakra-ui/react";
 import { User } from "firebase/auth";
+import { NextRouter } from "next/router";
 import { useState, useEffect } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
 import { TbMessageCircle2 } from "react-icons/tb";
+import { useRecoilState } from "recoil";
 import PostModal from "../PostModal/PostModal";
 import ViewLikesModal from "../PostModal/ViewLikesModal";
 
@@ -18,6 +21,7 @@ type MobilePostInfoSectionProps = {
   setOpenLikesModal: (input: boolean) => void;
   openLikesModal: boolean;
   user: User | undefined | null;
+  router: NextRouter;
 };
 
 const MobilePostInfoSection: React.FC<MobilePostInfoSectionProps> = ({
@@ -26,6 +30,7 @@ const MobilePostInfoSection: React.FC<MobilePostInfoSectionProps> = ({
   onUnLike,
   setOpenComments,
   setOpenLikesModal,
+  router,
   user,
 }) => {
   const [isLiked, setIsLiked] = useState(false);
@@ -154,18 +159,14 @@ const MobilePostInfoSection: React.FC<MobilePostInfoSectionProps> = ({
               fontWeight={600}
               cursor="pointer"
               _hover={{ color: "gray.300" }}
-              onClick={() => setOpenLikesModal(true)}
+              onClick={() => {
+                router.push(`/${item.comments[0].commentorName}`);
+              }}
               mr={2}
             >
               {item.comments[0].commentorName}
             </Text>
-            <Text
-              cursor="pointer"
-              _hover={{ color: "gray.300" }}
-              onClick={() => setOpenLikesModal(true)}
-            >
-              {item.comments[0].body}
-            </Text>
+            <Text>{item.comments[0].body}</Text>
           </Flex>
           <Flex>
             <Text
@@ -173,18 +174,14 @@ const MobilePostInfoSection: React.FC<MobilePostInfoSectionProps> = ({
               fontWeight={600}
               cursor="pointer"
               _hover={{ color: "gray.300" }}
-              onClick={() => setOpenLikesModal(true)}
+              onClick={() => {
+                router.push(`/${item.comments[1].commentorName}`);
+              }}
               mr={2}
             >
               {item.comments[1].commentorName}
             </Text>
-            <Text
-              cursor="pointer"
-              _hover={{ color: "gray.300" }}
-              onClick={() => setOpenLikesModal(true)}
-            >
-              {item.comments[1].body}
-            </Text>
+            <Text cursor="pointer">{item.comments[1].body}</Text>
           </Flex>
         </Stack>
       )}
@@ -196,18 +193,14 @@ const MobilePostInfoSection: React.FC<MobilePostInfoSectionProps> = ({
             fontWeight={600}
             cursor="pointer"
             _hover={{ color: "gray.300" }}
-            onClick={() => setOpenLikesModal(true)}
+            onClick={() => {
+              router.push(`/${item.comments[0].commentorName}`);
+            }}
             mr={2}
           >
             {item.comments[0].commentorName}
           </Text>
-          <Text
-            cursor="pointer"
-            _hover={{ color: "gray.300" }}
-            onClick={() => setOpenLikesModal(true)}
-          >
-            {item.comments[0].body}
-          </Text>
+          <Text cursor="pointer">{item.comments[0].body}</Text>
         </Flex>
       )}
     </Flex>
