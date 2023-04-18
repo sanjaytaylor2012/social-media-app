@@ -23,17 +23,16 @@ type HeaderProps = {
 const Header: React.FC<HeaderProps> = ({ userDoc, router, user }) => {
   const [open, setOpen] = useState(false);
   const [openFollowers, setOpenFollowers] = useState(false);
-  const { currentProfileState, getMyFollows } = useProfile(userDoc);
-
-  // useEffect(() => {
-  //   getMyFollows();
-  // }, []);
+  const { currentProfileState } = useProfile(userDoc);
 
   return (
     <Flex align={{ base: "top", sm: "center" }} ml={{ base: 5 }} mt={6} mb={4}>
       <Stack mr={5} align="center">
         {userDoc.profilePic === "" ? (
-          <Icon fontSize={150} as={AiOutlineInstagram} mr={20} />
+          <Icon
+            boxSize={{ base: "80px", sm: "150px" }}
+            as={AiOutlineInstagram}
+          />
         ) : (
           <Image
             objectFit="cover"

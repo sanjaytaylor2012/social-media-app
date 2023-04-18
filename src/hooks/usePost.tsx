@@ -253,7 +253,7 @@ const usePost = (postObject: Post) => {
           const updatedPost = {
             ...postItem,
             likeProfiles: updatedLikeProfiles,
-            likes: postItem.likes,
+            likes: postItem.likes - 1,
           };
           return updatedPost;
         } else {

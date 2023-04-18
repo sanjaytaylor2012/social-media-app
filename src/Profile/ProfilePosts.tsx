@@ -50,6 +50,7 @@ const Posts: React.FC<PostsProps> = ({ userDoc, user, router }) => {
 
   const getPosts = async () => {
     try {
+      setLoading(true);
       const userPosts = await getDocs(
         query(
           collection(firestore, `posts`),

@@ -3,10 +3,17 @@ import { Flex, Icon, Button, Image } from "@chakra-ui/react";
 import React from "react";
 import { AiOutlineInstagram } from "react-icons/ai";
 import { NextRouter } from "next/router";
+import { useRecoilState } from "recoil";
+import { NavBarState } from "@/atoms/SearchBarAtom";
 
-type SideBarItemsProps = { item: followProfile; router: NextRouter };
+type SideBarItemsProps = {
+  item: followProfile;
+  router: NextRouter;
+};
 
 const SideBarItems: React.FC<SideBarItemsProps> = ({ item, router }) => {
+  const [navState, setNavState] = useRecoilState(NavBarState);
+
   return (
     <Flex
       align="center"
@@ -35,6 +42,10 @@ const SideBarItems: React.FC<SideBarItemsProps> = ({ item, router }) => {
         height="30px"
         variant="login"
         onClick={() => {
+          setNavState({
+            selectedTab: "Profile",
+            previousTab: "Home",
+          });
           router.push(`/${item.name}`);
         }}
       >

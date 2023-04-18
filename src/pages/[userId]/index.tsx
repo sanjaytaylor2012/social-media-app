@@ -1,9 +1,9 @@
 import { auth, firestore } from "@/firebase/clientApp";
-import { Flex, Icon, Stack, Text } from "@chakra-ui/react";
+import { Flex, Icon, Stack, Text, useStatStyles } from "@chakra-ui/react";
 import { User } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import { GetServerSidePropsContext } from "next";
-import React from "react";
+import React, { useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import safeJsonStringify from "safe-json-stringify";
 import { AiOutlineInstagram } from "react-icons/ai";
@@ -19,6 +19,7 @@ type indexProps = {
 const ProfilePage: React.FC<indexProps> = ({ userDoc }) => {
   const router = useRouter();
   const [user] = useAuthState(auth);
+
   console.log(userDoc);
   return (
     <>

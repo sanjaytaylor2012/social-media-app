@@ -1,4 +1,5 @@
 import { Post } from "@/atoms/postAtom";
+import { NavBarState } from "@/atoms/SearchBarAtom";
 import { auth } from "@/firebase/clientApp";
 import MobileCommentsModal from "@/Modal/Profile/MobilePostModal.tsx/MobileCommentsModal";
 import PostModal from "@/Modal/Profile/PostModal/PostModal";
@@ -37,6 +38,7 @@ const HomeScreenPostInfoSection: React.FC<HomeScreenPostInfoSectionProps> = ({
   user,
 }) => {
   const [isLiked, setIsLiked] = useState(false);
+  const [navState, setNavState] = useRecoilState(NavBarState);
 
   useEffect(() => {
     if (item.likeProfiles) {
@@ -119,6 +121,15 @@ const HomeScreenPostInfoSection: React.FC<HomeScreenPostInfoSectionProps> = ({
             width="auto"
             mr={2}
             fontWeight={600}
+            cursor="pointer"
+            _hover={{ color: "gray.300" }}
+            onClick={() => {
+              setNavState({
+                selectedTab: "Profile",
+                previousTab: "Home",
+              });
+              router.push(`/${item.creatorDisplayName}`);
+            }}
           >
             {item.creatorDisplayName}
           </Text>
@@ -194,7 +205,13 @@ const HomeScreenPostInfoSection: React.FC<HomeScreenPostInfoSectionProps> = ({
               fontWeight={600}
               cursor="pointer"
               _hover={{ color: "gray.300" }}
-              onClick={() => router.push(`/${item.comments[0].commentorName}`)}
+              onClick={() => {
+                setNavState({
+                  selectedTab: "Profile",
+                  previousTab: "Home",
+                });
+                router.push(`/${item.comments[0].commentorName}`);
+              }}
               mr={2}
             >
               {item.comments[0].commentorName}
@@ -207,7 +224,13 @@ const HomeScreenPostInfoSection: React.FC<HomeScreenPostInfoSectionProps> = ({
               fontWeight={600}
               cursor="pointer"
               _hover={{ color: "gray.300" }}
-              onClick={() => router.push(`/${item.comments[1].commentorName}`)}
+              onClick={() => {
+                setNavState({
+                  selectedTab: "Profile",
+                  previousTab: "Home",
+                });
+                router.push(`/${item.comments[1].commentorName}`);
+              }}
               mr={2}
             >
               {item.comments[1].commentorName}
@@ -224,7 +247,13 @@ const HomeScreenPostInfoSection: React.FC<HomeScreenPostInfoSectionProps> = ({
             fontWeight={600}
             cursor="pointer"
             _hover={{ color: "gray.300" }}
-            onClick={() => router.push(`/${item.comments[0].commentorName}`)}
+            onClick={() => {
+              setNavState({
+                selectedTab: "Profile",
+                previousTab: "Home",
+              });
+              router.push(`/${item.comments[0].commentorName}`);
+            }}
             mr={2}
           >
             {item.comments[0].commentorName}

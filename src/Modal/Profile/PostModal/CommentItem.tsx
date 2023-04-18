@@ -1,4 +1,5 @@
 import { Comment, Post } from "@/atoms/postAtom";
+import { NavBarState } from "@/atoms/SearchBarAtom";
 import { auth } from "@/firebase/clientApp";
 import { Flex, Icon, Stack, Image, Text, Button } from "@chakra-ui/react";
 import { User } from "firebase/auth";
@@ -8,6 +9,7 @@ import React, { useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { AiOutlineInstagram } from "react-icons/ai";
 import { MdOutlineMenu } from "react-icons/md";
+import { useRecoilState } from "recoil";
 import DeleteCommentModal from "./DeleteCommentModal/DeleteCommentModal";
 
 type CommentItemProps = {
@@ -24,6 +26,7 @@ const CommentItem: React.FC<CommentItemProps> = ({
   router,
 }) => {
   const [open, setOpen] = useState(false);
+  const [navState, setNavState] = useRecoilState(NavBarState);
 
   return (
     <Flex width="100%" justify="start">
@@ -47,7 +50,13 @@ const CommentItem: React.FC<CommentItemProps> = ({
             fontWeight="600"
             mb={-2}
             mr={2}
-            onClick={() => router.push(`/${comment.commentorName}`)}
+            onClick={() => {
+              setNavState({
+                selectedTab: "Profile",
+                previousTab: "Home",
+              });
+              router.push(`/${comment.commentorName}`);
+            }}
           >
             {comment.commentorName}
           </Text>

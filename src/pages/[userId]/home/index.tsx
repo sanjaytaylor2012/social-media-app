@@ -1,4 +1,5 @@
 import { Post, postState } from "@/atoms/postAtom";
+import { NavBarState } from "@/atoms/SearchBarAtom";
 import { currentUserStates } from "@/atoms/userAtom";
 import { auth, firestore } from "@/firebase/clientApp";
 import PostItem from "@/HomeScreen/PostItem/PostItem";
@@ -6,6 +7,8 @@ import SideBarItems from "@/HomeScreen/SideBarItems";
 import SwitchAccountIcon from "@/HomeScreen/SwitchAccountIcon";
 import useProfile from "@/hooks/useProfile";
 import PageContent from "@/Layout/PageContent";
+import PostLoader from "@/Profile/ProfilePostLoader";
+import SearchBar from "@/SearchBar/SearchBar";
 import { Stack, Text } from "@chakra-ui/react";
 import { uuidv4 } from "@firebase/util";
 import {
@@ -36,11 +39,12 @@ const index: React.FC = ({}) => {
   const { getMyFollows } = useProfile();
   const [user] = useAuthState(auth);
   const router = useRouter();
-
+  const [loading, setLoading] = useState(false);
   const [profilePicUser, setProfilePicUser] = useState("");
 
   const getPosts = async () => {
     try {
+      setLoading(true);
       const userDocRef = doc(firestore, `users/${user!.email!.split("@")[0]}`);
       const userDoc = await getDoc(userDocRef);
       setProfilePicUser(userDoc!.data()!.profilePic);
@@ -148,6 +152,7 @@ const index: React.FC = ({}) => {
         ...prev,
         posts: sortedDocs,
       }));
+      setLoading(false);
     } catch (error: any) {
       console.log(error);
     }
@@ -170,44 +175,52 @@ const index: React.FC = ({}) => {
   }, []);
 
   return (
-    <PageContent>
-      <>
-        <Stack mb={20}>
-          {currentPostState.posts.map((item: any) => {
-            return (
-              <>
-                <PostItem
-                  router={router}
-                  user={user}
-                  key={uuidv4()}
-                  item={item}
-                />
-              </>
-            );
-          })}
-        </Stack>
-      </>
-      <>
-        <Stack
-          align="start"
-          // border="3px solid"
-          p={{ base: 0, sm: 4 }}
-          borderRadius={{ base: "0px", md: "10px" }}
-          borderColor="gray.400"
-          borderWidth={{ base: "0px", md: "3px" }}
-          width={{ base: "0vw", md: "30vw" }}
-          maxWidth="400px"
-          minWidth={{ base: "0px", sm: "300px" }}
-          // border="1px solid"
-        >
-          <SwitchAccountIcon profilePic={profilePicUser} user={user} />
-          <Text fontSize={{ base: "0px", md: "12pt" }}>Following</Text>
-          {currentUserProfileState.myFollowings.map((item) => {
-            return <SideBarItems router={router} key={uuidv4()} item={item} />;
-          })}
-        </Stack>
-      </>
-    </PageContent>
+    <>
+      {loading ? (
+        <PostLoader />
+      ) : (
+        <PageContent>
+          <>
+            <Stack mb={20}>
+              {currentPostState.posts.map((item: any) => {
+                return (
+                  <>
+                    <PostItem
+                      router={router}
+                      user={user}
+                      key={uuidv4()}
+                      item={item}
+                    />
+                  </>
+                );
+              })}
+            </Stack>
+          </>
+          <>
+            <Stack
+              align="start"
+              // border="3px solid"
+              p={{ base: 0, sm: 4 }}
+              borderRadius={{ base: "0px", md: "10px" }}
+              borderColor="gray.400"
+              borderWidth={{ base: "0px", md: "3px" }}
+              width={{ base: "0vw", md: "30vw" }}
+              maxWidth="400px"
+              minWidth={{ base: "0px", sm: "300px" }}
+              // border="1px solid"
+            >
+              <SwitchAccountIcon profilePic={profilePicUser} user={user} />
+              <Text fontSize={{ base: "0px", md: "12pt" }}>Following</Text>
+              {currentUserProfileState.myFollowings.map((item) => {
+                return (
+                  <SideBarItems router={router} key={uuidv4()} item={item} />
+                );
+              })}
+            </Stack>
+          </>
+        </PageContent>
+      )}
+    </>
   );
 };
 export default index;

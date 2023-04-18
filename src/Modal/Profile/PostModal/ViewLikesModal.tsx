@@ -1,4 +1,5 @@
 import { Post } from "@/atoms/postAtom";
+import { NavBarState } from "@/atoms/SearchBarAtom";
 import { UserType } from "@/atoms/userAtom";
 import { firestore, storage } from "@/firebase/clientApp";
 import useProfile from "@/hooks/useProfile";
@@ -42,6 +43,8 @@ const ViewLikesModal: React.FC<ViewLikesModalProps> = ({
   setOpen,
   router,
 }) => {
+  const [navState, setNavState] = useRecoilState(NavBarState);
+
   return (
     <Modal isOpen={open} onClose={() => setOpen(false)}>
       <ModalOverlay />
@@ -65,6 +68,11 @@ const ViewLikesModal: React.FC<ViewLikesModalProps> = ({
                     height="30px"
                     variant="login"
                     onClick={() => {
+                      setNavState({
+                        selectedTab: "Profile",
+                        previousTab: "Home",
+                      });
+
                       router.push(`/${item.name}`);
                     }}
                   >
