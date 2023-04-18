@@ -1,12 +1,12 @@
 import { followProfile } from "@/atoms/userAtom";
 import { Flex, Icon, Button, Image } from "@chakra-ui/react";
-import router from "next/router";
 import React from "react";
 import { AiOutlineInstagram } from "react-icons/ai";
+import { NextRouter } from "next/router";
 
-type SideBarItemsProps = { item: followProfile };
+type SideBarItemsProps = { item: followProfile; router: NextRouter };
 
-const SideBarItems: React.FC<SideBarItemsProps> = ({ item }) => {
+const SideBarItems: React.FC<SideBarItemsProps> = ({ item, router }) => {
   return (
     <Flex
       align="center"

@@ -2,18 +2,24 @@ import { Post } from "@/atoms/postAtom";
 import { UserType } from "@/atoms/userAtom";
 import { auth } from "@/firebase/clientApp";
 import { Flex, Stack, Divider, Image, Text, Icon } from "@chakra-ui/react";
+import { User } from "firebase/auth";
 import React, { useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { AiOutlineInstagram } from "react-icons/ai";
 import { FiMenu } from "react-icons/fi";
 import DeletePostModal from "./DeletePostModal/DeletePostModal";
 
-type PostModalHeaderProps = { item: Post };
+type PostModalHeaderProps = {
+  item: Post;
+  user: User | null | undefined;
+  setOpenDeletePostModal: (input: boolean) => void;
+};
 
-const PostModalHeader: React.FC<PostModalHeaderProps> = ({ item }) => {
-  const [open, setOpen] = useState(false);
-  const [user] = useAuthState(auth);
-
+const PostModalHeader: React.FC<PostModalHeaderProps> = ({
+  item,
+  user,
+  setOpenDeletePostModal,
+}) => {
   return (
     <>
       <Flex align="center" justify="space-between">
@@ -37,7 +43,7 @@ const PostModalHeader: React.FC<PostModalHeaderProps> = ({ item }) => {
             as={FiMenu}
             mr={4}
             onClick={() => {
-              setOpen(true);
+              setOpenDeletePostModal(true);
             }}
             cursor="pointer"
           />
@@ -51,7 +57,6 @@ const PostModalHeader: React.FC<PostModalHeaderProps> = ({ item }) => {
 
         <Text mr={2}>{item.body}</Text>
       </Flex>
-      <DeletePostModal user={user} item={item} open={open} setOpen={setOpen} />
     </>
   );
 };

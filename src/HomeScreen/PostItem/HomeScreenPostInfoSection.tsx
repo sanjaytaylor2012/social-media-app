@@ -4,7 +4,9 @@ import MobileCommentsModal from "@/Modal/Profile/MobilePostModal.tsx/MobileComme
 import PostModal from "@/Modal/Profile/PostModal/PostModal";
 import ViewLikesModal from "@/Modal/Profile/PostModal/ViewLikesModal";
 import { Flex, Divider, Icon, Text, Stack } from "@chakra-ui/react";
+import { User } from "firebase/auth";
 import moment from "moment";
+import { NextRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { AiFillHeart } from "react-icons/ai";
@@ -13,22 +15,28 @@ import { TbMessageCircle2 } from "react-icons/tb";
 import { useRecoilState } from "recoil";
 
 type HomeScreenPostInfoSectionProps = {
+  router: NextRouter;
   item: Post;
   onLike: () => Promise<void>;
   onUnLike: () => Promise<void>;
   loading: boolean;
+  setOpenMobileComments: (input: boolean) => void;
+  setOpenLikesModal: (input: boolean) => void;
+  user: User | null | undefined;
+  setOpenPostModal: (input: boolean) => void;
 };
 
 const HomeScreenPostInfoSection: React.FC<HomeScreenPostInfoSectionProps> = ({
   item,
   onLike,
   onUnLike,
+  setOpenLikesModal,
+  setOpenMobileComments,
+  setOpenPostModal,
+  router,
+  user,
 }) => {
-  const [user] = useAuthState(auth);
-  const [open, setOpen] = useState(false);
-  const [openPostModal, setOpenPostModal] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
-  const [openMobileComments, setOpenMobileComments] = useState(false);
 
   useEffect(() => {
     if (item.likeProfiles) {
@@ -87,7 +95,7 @@ const HomeScreenPostInfoSection: React.FC<HomeScreenPostInfoSectionProps> = ({
           fontWeight={600}
           cursor="pointer"
           _hover={{ color: "gray.300" }}
-          onClick={() => setOpen(true)}
+          onClick={() => setOpenLikesModal(true)}
         >
           Liked by {item.likeProfiles[0].name}
         </Text>
@@ -98,7 +106,7 @@ const HomeScreenPostInfoSection: React.FC<HomeScreenPostInfoSectionProps> = ({
           fontWeight={600}
           cursor="pointer"
           _hover={{ color: "gray.300" }}
-          onClick={() => setOpen(true)}
+          onClick={() => setOpenLikesModal(true)}
         >
           Liked by {item.likeProfiles[0].name} and {item.likes - 1} others
         </Text>
@@ -186,18 +194,12 @@ const HomeScreenPostInfoSection: React.FC<HomeScreenPostInfoSectionProps> = ({
               fontWeight={600}
               cursor="pointer"
               _hover={{ color: "gray.300" }}
-              onClick={() => setOpen(true)}
+              onClick={() => router.push(`/${item.comments[0].commentorName}`)}
               mr={2}
             >
               {item.comments[0].commentorName}
             </Text>
-            <Text
-              cursor="pointer"
-              _hover={{ color: "gray.300" }}
-              onClick={() => setOpen(true)}
-            >
-              {item.comments[0].body}
-            </Text>
+            <Text cursor="pointer">{item.comments[0].body}</Text>
           </Flex>
           <Flex>
             <Text
@@ -205,18 +207,12 @@ const HomeScreenPostInfoSection: React.FC<HomeScreenPostInfoSectionProps> = ({
               fontWeight={600}
               cursor="pointer"
               _hover={{ color: "gray.300" }}
-              onClick={() => setOpen(true)}
+              onClick={() => router.push(`/${item.comments[1].commentorName}`)}
               mr={2}
             >
               {item.comments[1].commentorName}
             </Text>
-            <Text
-              cursor="pointer"
-              _hover={{ color: "gray.300" }}
-              onClick={() => setOpen(true)}
-            >
-              {item.comments[1].body}
-            </Text>
+            <Text cursor="pointer">{item.comments[1].body}</Text>
           </Flex>
         </Stack>
       )}
@@ -228,28 +224,14 @@ const HomeScreenPostInfoSection: React.FC<HomeScreenPostInfoSectionProps> = ({
             fontWeight={600}
             cursor="pointer"
             _hover={{ color: "gray.300" }}
-            onClick={() => setOpen(true)}
+            onClick={() => router.push(`/${item.comments[0].commentorName}`)}
             mr={2}
           >
             {item.comments[0].commentorName}
           </Text>
-          <Text
-            cursor="pointer"
-            _hover={{ color: "gray.300" }}
-            onClick={() => setOpen(true)}
-          >
-            {item.comments[0].body}
-          </Text>
+          <Text cursor="pointer">{item.comments[0].body}</Text>
         </Flex>
       )}
-
-      <ViewLikesModal item={item} open={open} setOpen={setOpen} />
-      <PostModal item={item} open={openPostModal} setOpen={setOpenPostModal} />
-      <MobileCommentsModal
-        item={item}
-        isOpen={openMobileComments}
-        setClose={setOpenMobileComments}
-      />
     </Flex>
   );
 };

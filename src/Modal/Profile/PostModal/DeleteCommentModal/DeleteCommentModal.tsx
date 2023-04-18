@@ -42,10 +42,7 @@ const DeleteCommentModal: React.FC<DeleteCommentModalProps> = ({
   comment,
   post,
 }) => {
-  const router = useRouter();
-  const [user] = useAuthState(auth);
   const [loading, setLoading] = useState(false);
-
   const { setCurrentPostState, currentPostState } = usePost(post);
 
   const handleDeleteComment = async () => {
@@ -60,7 +57,7 @@ const DeleteCommentModal: React.FC<DeleteCommentModalProps> = ({
       const updatedPosts = currentPostState.posts.map((postItem) => {
         if (postItem.id === post.id) {
           const updatedComments = postItem.comments.filter((commentcheck) => {
-            commentcheck.id !== comment.id;
+            return commentcheck.id !== comment.id;
           });
           const updatedPost = {
             ...postItem,
@@ -78,7 +75,6 @@ const DeleteCommentModal: React.FC<DeleteCommentModalProps> = ({
       }));
 
       setLoading(false);
-      setOpen(false);
     } catch (error: any) {
       console.log("handleDeleteComment error: ", error.message);
     }

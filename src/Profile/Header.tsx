@@ -4,7 +4,7 @@ import useProfile from "@/hooks/useProfile";
 import ViewFollowersModal from "@/Modal/Profile/FollowersModal/ViewFollowersModal";
 import ViewFollowingModal from "@/Modal/Profile/FollowingModal/ViewFollowingModal";
 import { Button, Flex, Icon, Stack, Text, Image } from "@chakra-ui/react";
-import { useRouter } from "next/router";
+import { NextRouter, useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { AiOutlineInstagram } from "react-icons/ai";
@@ -12,16 +12,18 @@ import FollowButton from "./FollowButton";
 import { v4 as uuidv4 } from "uuid";
 import { postState } from "@/atoms/postAtom";
 import { useRecoilState } from "recoil";
+import { User } from "firebase/auth";
 
-type HeaderProps = { userDoc: UserType };
+type HeaderProps = {
+  userDoc: UserType;
+  router: NextRouter;
+  user: User | undefined | null;
+};
 
-const Header: React.FC<HeaderProps> = ({ userDoc }) => {
-  const router = useRouter();
-  const [user] = useAuthState(auth);
+const Header: React.FC<HeaderProps> = ({ userDoc, router, user }) => {
   const [open, setOpen] = useState(false);
   const [openFollowers, setOpenFollowers] = useState(false);
   const { currentProfileState, getMyFollows } = useProfile(userDoc);
-  const [postStateValue, setPostStateValue] = useRecoilState(postState);
 
   // useEffect(() => {
   //   getMyFollows();

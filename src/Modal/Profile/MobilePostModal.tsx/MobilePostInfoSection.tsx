@@ -1,6 +1,7 @@
 import { Post } from "@/atoms/postAtom";
 import { auth } from "@/firebase/clientApp";
 import { Flex, Icon, Stack, Text } from "@chakra-ui/react";
+import { User } from "firebase/auth";
 import { useState, useEffect } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
@@ -14,6 +15,9 @@ type MobilePostInfoSectionProps = {
   onUnLike: () => Promise<void>;
   loading: boolean;
   setOpenComments: (input: boolean) => void;
+  setOpenLikesModal: (input: boolean) => void;
+  openLikesModal: boolean;
+  user: User | undefined | null;
 };
 
 const MobilePostInfoSection: React.FC<MobilePostInfoSectionProps> = ({
@@ -21,10 +25,9 @@ const MobilePostInfoSection: React.FC<MobilePostInfoSectionProps> = ({
   onLike,
   onUnLike,
   setOpenComments,
+  setOpenLikesModal,
+  user,
 }) => {
-  const [user] = useAuthState(auth);
-  const [open, setOpen] = useState(false);
-  const [openPostModal, setOpenPostModal] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
 
   useEffect(() => {
@@ -84,7 +87,7 @@ const MobilePostInfoSection: React.FC<MobilePostInfoSectionProps> = ({
           fontWeight={600}
           cursor="pointer"
           _hover={{ color: "gray.300" }}
-          onClick={() => setOpen(true)}
+          onClick={() => setOpenLikesModal(true)}
         >
           Liked by {item.likeProfiles[0].name}
         </Text>
@@ -95,7 +98,7 @@ const MobilePostInfoSection: React.FC<MobilePostInfoSectionProps> = ({
           fontWeight={600}
           cursor="pointer"
           _hover={{ color: "gray.300" }}
-          onClick={() => setOpen(true)}
+          onClick={() => setOpenLikesModal(true)}
         >
           Liked by {item.likeProfiles[0].name} and {item.likes - 1} others
         </Text>
@@ -151,7 +154,7 @@ const MobilePostInfoSection: React.FC<MobilePostInfoSectionProps> = ({
               fontWeight={600}
               cursor="pointer"
               _hover={{ color: "gray.300" }}
-              onClick={() => setOpen(true)}
+              onClick={() => setOpenLikesModal(true)}
               mr={2}
             >
               {item.comments[0].commentorName}
@@ -159,7 +162,7 @@ const MobilePostInfoSection: React.FC<MobilePostInfoSectionProps> = ({
             <Text
               cursor="pointer"
               _hover={{ color: "gray.300" }}
-              onClick={() => setOpen(true)}
+              onClick={() => setOpenLikesModal(true)}
             >
               {item.comments[0].body}
             </Text>
@@ -170,7 +173,7 @@ const MobilePostInfoSection: React.FC<MobilePostInfoSectionProps> = ({
               fontWeight={600}
               cursor="pointer"
               _hover={{ color: "gray.300" }}
-              onClick={() => setOpen(true)}
+              onClick={() => setOpenLikesModal(true)}
               mr={2}
             >
               {item.comments[1].commentorName}
@@ -178,7 +181,7 @@ const MobilePostInfoSection: React.FC<MobilePostInfoSectionProps> = ({
             <Text
               cursor="pointer"
               _hover={{ color: "gray.300" }}
-              onClick={() => setOpen(true)}
+              onClick={() => setOpenLikesModal(true)}
             >
               {item.comments[1].body}
             </Text>
@@ -193,7 +196,7 @@ const MobilePostInfoSection: React.FC<MobilePostInfoSectionProps> = ({
             fontWeight={600}
             cursor="pointer"
             _hover={{ color: "gray.300" }}
-            onClick={() => setOpen(true)}
+            onClick={() => setOpenLikesModal(true)}
             mr={2}
           >
             {item.comments[0].commentorName}
@@ -201,15 +204,12 @@ const MobilePostInfoSection: React.FC<MobilePostInfoSectionProps> = ({
           <Text
             cursor="pointer"
             _hover={{ color: "gray.300" }}
-            onClick={() => setOpen(true)}
+            onClick={() => setOpenLikesModal(true)}
           >
             {item.comments[0].body}
           </Text>
         </Flex>
       )}
-
-      <ViewLikesModal item={item} open={open} setOpen={setOpen} />
-      <PostModal item={item} open={openPostModal} setOpen={setOpenPostModal} />
     </Flex>
   );
 };

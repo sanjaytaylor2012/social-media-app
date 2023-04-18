@@ -1,7 +1,9 @@
 import { Comment, Post } from "@/atoms/postAtom";
 import { auth } from "@/firebase/clientApp";
 import { Flex, Icon, Stack, Image, Text, Button } from "@chakra-ui/react";
+import { User } from "firebase/auth";
 import moment from "moment";
+import { NextRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { AiOutlineInstagram } from "react-icons/ai";
@@ -11,10 +13,16 @@ import DeleteCommentModal from "./DeleteCommentModal/DeleteCommentModal";
 type CommentItemProps = {
   comment: Comment;
   post: Post;
+  user: User | null | undefined;
+  router: NextRouter;
 };
 
-const CommentItem: React.FC<CommentItemProps> = ({ comment, post }) => {
-  const [user] = useAuthState(auth);
+const CommentItem: React.FC<CommentItemProps> = ({
+  comment,
+  post,
+  user,
+  router,
+}) => {
   const [open, setOpen] = useState(false);
 
   return (
@@ -33,7 +41,14 @@ const CommentItem: React.FC<CommentItemProps> = ({ comment, post }) => {
       )}
       <Stack>
         <Flex justify="start">
-          <Text fontWeight="600" mb={-2} mr={2}>
+          <Text
+            cursor="pointer"
+            _hover={{ color: "gray.300" }}
+            fontWeight="600"
+            mb={-2}
+            mr={2}
+            onClick={() => router.push(`/${comment.commentorName}`)}
+          >
             {comment.commentorName}
           </Text>
           {user!.email!.split("@")[0] === comment.commentorName ? (

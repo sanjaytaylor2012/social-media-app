@@ -1,4 +1,4 @@
-import { firestore } from "@/firebase/clientApp";
+import { auth, firestore } from "@/firebase/clientApp";
 import { Flex, Icon, Stack, Text } from "@chakra-ui/react";
 import { User } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
@@ -10,18 +10,21 @@ import { AiOutlineInstagram } from "react-icons/ai";
 import { UserType } from "@/atoms/userAtom";
 import Header from "@/Profile/Header";
 import ProfilePosts from "@/Profile/ProfilePosts";
+import { useRouter } from "next/router";
 
 type indexProps = {
   userDoc: UserType;
 };
 
 const ProfilePage: React.FC<indexProps> = ({ userDoc }) => {
+  const router = useRouter();
+  const [user] = useAuthState(auth);
   console.log(userDoc);
   return (
     <>
       <Stack mb={5} mr={"5vw"}>
-        <Header userDoc={userDoc} />
-        <ProfilePosts userDoc={userDoc} />
+        <Header user={user} router={router} userDoc={userDoc} />
+        <ProfilePosts user={user} router={router} userDoc={userDoc} />
       </Stack>
     </>
   );

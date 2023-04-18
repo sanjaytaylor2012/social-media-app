@@ -25,7 +25,7 @@ import {
   writeBatch,
 } from "firebase/firestore";
 import { deleteObject, ref } from "firebase/storage";
-import { useRouter } from "next/router";
+import { NextRouter, useRouter } from "next/router";
 import React, { useState } from "react";
 import { useRecoilState } from "recoil";
 
@@ -33,15 +33,15 @@ type ViewLikesModalProps = {
   item: Post;
   open: boolean;
   setOpen: (input: boolean) => void;
+  router: NextRouter;
 };
 
 const ViewLikesModal: React.FC<ViewLikesModalProps> = ({
   item,
   open,
   setOpen,
+  router,
 }) => {
-  const router = useRouter();
-
   return (
     <Modal isOpen={open} onClose={() => setOpen(false)}>
       <ModalOverlay />

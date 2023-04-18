@@ -1,5 +1,5 @@
 import { Post } from "@/atoms/postAtom";
-import PostItem from "@/HomeScreen/PostItem";
+import PostItem from "@/HomeScreen/PostItem/PostItem";
 import usePost from "@/hooks/usePost";
 import {
   Modal,
@@ -14,6 +14,8 @@ import {
   Flex,
   Box,
 } from "@chakra-ui/react";
+import { User } from "firebase/auth";
+import { NextRouter } from "next/router";
 import React, { useState } from "react";
 import CommentInput from "../PostModal/CommentInput";
 import CommentItem from "../PostModal/CommentItem";
@@ -23,12 +25,16 @@ type MobileCommentsModalProps = {
   item: Post;
   isOpen: boolean;
   setClose: (input: boolean) => void;
+  user: User | undefined | null;
+  router: NextRouter;
 };
 
 const MobileCommentsModal: React.FC<MobileCommentsModalProps> = ({
   isOpen,
   setClose,
   item,
+  user,
+  router,
 }) => {
   const { addComment, loading } = usePost(item);
 
@@ -53,7 +59,14 @@ const MobileCommentsModal: React.FC<MobileCommentsModalProps> = ({
           <Stack height={"100%"} justify={"space-between"}>
             <Stack>
               {item.comments.map((comment) => {
-                return <CommentItem comment={comment} post={item} />;
+                return (
+                  <CommentItem
+                    router={router}
+                    user={user}
+                    comment={comment}
+                    post={item}
+                  />
+                );
               })}
             </Stack>
             <Box position="fixed" width="90%" bottom={0}>

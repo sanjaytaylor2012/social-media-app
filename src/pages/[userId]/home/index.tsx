@@ -1,7 +1,7 @@
 import { Post, postState } from "@/atoms/postAtom";
 import { currentUserStates } from "@/atoms/userAtom";
 import { auth, firestore } from "@/firebase/clientApp";
-import PostItem from "@/HomeScreen/PostItem";
+import PostItem from "@/HomeScreen/PostItem/PostItem";
 import SideBarItems from "@/HomeScreen/SideBarItems";
 import SwitchAccountIcon from "@/HomeScreen/SwitchAccountIcon";
 import useProfile from "@/hooks/useProfile";
@@ -20,6 +20,7 @@ import {
   DocumentData,
   QuerySnapshot,
 } from "firebase/firestore";
+import { useRouter } from "next/router";
 
 import React, { useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
@@ -34,6 +35,7 @@ const index: React.FC = ({}) => {
     useRecoilState(currentUserStates);
   const { getMyFollows } = useProfile();
   const [user] = useAuthState(auth);
+  const router = useRouter();
 
   const [profilePicUser, setProfilePicUser] = useState("");
 
@@ -106,7 +108,12 @@ const index: React.FC = ({}) => {
       let commentPromises: Array<Promise<QuerySnapshot<DocumentData>>> = [];
       feedPosts.forEach((post) => {
         commentPromises.push(
-          getDocs(collection(firestore, `posts/${post.id}/comments`))
+          getDocs(
+            query(
+              collection(firestore, `posts/${post.id}/comments`),
+              orderBy("createdAt", "desc")
+            )
+          )
         );
       });
 
@@ -165,17 +172,16 @@ const index: React.FC = ({}) => {
   return (
     <PageContent>
       <>
-        {currentPostState.posts.length == 0 && (
-          <Text>
-            Your friends haven't posted yet. Follow more people to see posts!
-          </Text>
-        )}
-
         <Stack mb={20}>
           {currentPostState.posts.map((item: any) => {
             return (
               <>
-                <PostItem key={uuidv4()} item={item} />
+                <PostItem
+                  router={router}
+                  user={user}
+                  key={uuidv4()}
+                  item={item}
+                />
               </>
             );
           })}
@@ -197,7 +203,7 @@ const index: React.FC = ({}) => {
           <SwitchAccountIcon profilePic={profilePicUser} user={user} />
           <Text fontSize={{ base: "0px", md: "12pt" }}>Following</Text>
           {currentUserProfileState.myFollowings.map((item) => {
-            return <SideBarItems key={uuidv4()} item={item} />;
+            return <SideBarItems router={router} key={uuidv4()} item={item} />;
           })}
         </Stack>
       </>

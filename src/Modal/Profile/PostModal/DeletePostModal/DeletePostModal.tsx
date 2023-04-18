@@ -23,7 +23,7 @@ import {
   writeBatch,
 } from "firebase/firestore";
 import { deleteObject, ref } from "firebase/storage";
-import { useRouter } from "next/router";
+import { NextRouter, useRouter } from "next/router";
 import React, { useState } from "react";
 import { useRecoilState } from "recoil";
 
@@ -32,6 +32,7 @@ type DeletePostModalProps = {
   setOpen: (input: boolean) => void;
   item: Post;
   user: User | null | undefined;
+  router: NextRouter;
 };
 
 const DeletePostModal: React.FC<DeletePostModalProps> = ({
@@ -39,9 +40,9 @@ const DeletePostModal: React.FC<DeletePostModalProps> = ({
   setOpen,
   item,
   user,
+  router,
 }) => {
   const [loading, setLoading] = useState(false);
-  const router = useRouter();
   const [postStateValue, setPostStateValue] = useRecoilState(postState);
 
   const handleDeletePost = async () => {

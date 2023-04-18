@@ -34,20 +34,30 @@ import PostInfoSection from "./PostInfoSection";
 import { FiMenu } from "react-icons/fi";
 import { query, collection, where, orderBy } from "firebase/firestore";
 import { firestore } from "@/firebase/clientApp";
+import { User } from "firebase/auth";
+import DeletePostModal from "./DeletePostModal/DeletePostModal";
+import ViewLikesModal from "./ViewLikesModal";
+import { NextRouter } from "next/router";
 
-type ViewFollowingModalProps = {
+type PostModalProps = {
   open: boolean;
   setOpen: (input: boolean) => void;
   item: Post;
+  user: User | null | undefined;
+  router: NextRouter;
 };
 
-const ViewFollowingModal: React.FC<ViewFollowingModalProps> = ({
+const PostModal: React.FC<PostModalProps> = ({
   open,
   setOpen,
   item,
+  user,
+  router,
 }) => {
   const { addComment, onUnLike, onLike, loading } = usePost(item);
   const [comment, setComment] = useState("");
+  const [openDeletePostModal, setOpenDeletePostModal] = useState(false);
+  const [openLikesModal, setOpenLikesModal] = useState(false);
 
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
@@ -83,7 +93,11 @@ const ViewFollowingModal: React.FC<ViewFollowingModalProps> = ({
             />
             <Stack width="100%" justify="space-between">
               <Stack ml={4} mt={4}>
-                <PostModalHeader item={item} />
+                <PostModalHeader
+                  user={user}
+                  setOpenDeletePostModal={setOpenDeletePostModal}
+                  item={item}
+                />
 
                 {/* {loading ? (
                   <ProfilePostLoader />
@@ -106,6 +120,8 @@ const ViewFollowingModal: React.FC<ViewFollowingModalProps> = ({
                     {item.comments.map((comment: any) => {
                       return (
                         <CommentItem
+                          router={router}
+                          user={user}
                           post={item}
                           key={comment.id}
                           comment={comment}
@@ -117,6 +133,8 @@ const ViewFollowingModal: React.FC<ViewFollowingModalProps> = ({
                 )}
 
                 <PostInfoSection
+                  setOpenLikesModal={setOpenLikesModal}
+                  user={user}
                   onLike={onLike}
                   onUnLike={onUnLike}
                   item={item}
@@ -132,7 +150,20 @@ const ViewFollowingModal: React.FC<ViewFollowingModalProps> = ({
           </Flex>
         </ModalBody>
       </ModalContent>
+      <DeletePostModal
+        router={router}
+        user={user}
+        item={item}
+        open={openDeletePostModal}
+        setOpen={setOpenDeletePostModal}
+      />
+      <ViewLikesModal
+        router={router}
+        item={item}
+        open={openLikesModal}
+        setOpen={setOpenLikesModal}
+      />
     </Modal>
   );
 };
-export default ViewFollowingModal;
+export default PostModal;

@@ -1,24 +1,28 @@
 import { Post } from "@/atoms/postAtom";
-import { UserType } from "@/atoms/userAtom";
 import { auth } from "@/firebase/clientApp";
-import usePost from "@/hooks/usePost";
-import DeletePostModal from "@/Modal/Profile/PostModal/DeletePostModal/DeletePostModal";
-import PostInfoSection from "@/Modal/Profile/PostModal/PostInfoSection";
-import { Flex, Stack, Divider, Image, Text, Icon } from "@chakra-ui/react";
+import { Flex, Icon, Image, Text } from "@chakra-ui/react";
+import { User } from "firebase/auth";
 import moment from "moment";
-import { useRouter } from "next/router";
-import React, { useState } from "react";
+import { NextRouter, useRouter } from "next/router";
+import { useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { AiOutlineInstagram } from "react-icons/ai";
 import { FiMenu } from "react-icons/fi";
+import DeletePostModal from "../PostModal/DeletePostModal/DeletePostModal";
 
-type PostHeaderProps = { item: Post };
+type MobilePostHeaderProps = {
+  item: Post;
+  router: NextRouter;
+  user: User | undefined | null;
+  setOpenDeletePostModal: (input: boolean) => void;
+};
 
-const PostHeader: React.FC<PostHeaderProps> = ({ item }) => {
-  const [open, setOpen] = useState(false);
-  const [user] = useAuthState(auth);
-  const router = useRouter();
-
+const MobilePostHeader: React.FC<MobilePostHeaderProps> = ({
+  item,
+  router,
+  user,
+  setOpenDeletePostModal,
+}) => {
   return (
     <>
       <Flex ml={{ base: 2, sm: 0 }} align="center" justify="space-between">
@@ -49,8 +53,18 @@ const PostHeader: React.FC<PostHeaderProps> = ({ item }) => {
             {moment(new Date(item?.createdAt?.seconds * 1000)).fromNow()}
           </Text>
         </Flex>
+        {item.creatorDisplayName === user!.email!.split("@")[0] && (
+          <Icon
+            as={FiMenu}
+            mr={10}
+            onClick={() => {
+              setOpenDeletePostModal(true);
+            }}
+            cursor="pointer"
+          />
+        )}
       </Flex>
     </>
   );
 };
-export default PostHeader;
+export default MobilePostHeader;

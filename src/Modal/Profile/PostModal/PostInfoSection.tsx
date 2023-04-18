@@ -1,6 +1,7 @@
 import { Post } from "@/atoms/postAtom";
 import { auth } from "@/firebase/clientApp";
 import { Flex, Divider, Icon, Text } from "@chakra-ui/react";
+import { User } from "firebase/auth";
 import moment from "moment";
 import React, { useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
@@ -15,6 +16,8 @@ type PostInfoSectionProps = {
   onLike: () => Promise<void>;
   onUnLike: () => Promise<void>;
   loading: boolean;
+  user: User | null | undefined;
+  setOpenLikesModal: (input: boolean) => void;
 };
 
 const PostInfoSection: React.FC<PostInfoSectionProps> = ({
@@ -22,11 +25,9 @@ const PostInfoSection: React.FC<PostInfoSectionProps> = ({
   onLike,
   onUnLike,
   loading,
+  user,
+  setOpenLikesModal,
 }) => {
-  const [user] = useAuthState(auth);
-
-  const [open, setOpen] = useState(false);
-
   const isLiked = !!item.likeProfiles.find(
     (item) => item.name === user!.email!.split("@")[0]
   );
@@ -62,7 +63,7 @@ const PostInfoSection: React.FC<PostInfoSectionProps> = ({
           fontWeight={600}
           cursor="pointer"
           _hover={{ color: "gray.300" }}
-          onClick={() => setOpen(true)}
+          onClick={() => setOpenLikesModal(true)}
         >
           Liked by {item.likeProfiles[0].name}
         </Text>
@@ -72,7 +73,7 @@ const PostInfoSection: React.FC<PostInfoSectionProps> = ({
           fontWeight={600}
           cursor="pointer"
           _hover={{ color: "gray.300" }}
-          onClick={() => setOpen(true)}
+          onClick={() => setOpenLikesModal(true)}
         >
           Liked by {item.likeProfiles[0].name} and {item.likes - 1} others
         </Text>
@@ -81,7 +82,6 @@ const PostInfoSection: React.FC<PostInfoSectionProps> = ({
       <Text fontSize="10pt" color="gray.400">
         {moment(new Date(item?.createdAt?.seconds * 1000)).fromNow()}
       </Text>
-      <ViewLikesModal item={item} open={open} setOpen={setOpen} />
     </Flex>
   );
 };

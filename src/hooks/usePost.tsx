@@ -72,7 +72,7 @@ const usePost = (postObject: Post) => {
 
       const updatedPosts = currentPostState.posts.map((post) => {
         if (post.id === postObject.id) {
-          const updatedComments = [...post.comments, newComment];
+          const updatedComments = [newComment, ...post.comments];
 
           const updatedPost = {
             ...post,
@@ -243,21 +243,24 @@ const usePost = (postObject: Post) => {
 
       const updatedPosts = currentPostState.posts.map((postItem) => {
         if (postItem.id === postObject.id) {
+          console.log(postItem.likeProfiles);
           const updatedLikeProfiles = postItem.likeProfiles.filter(
             (profile) => {
-              profile.name === user!.email!.split("@")[0];
+              return profile.name !== user!.email!.split("@")[0];
             }
           );
+          console.log(updatedLikeProfiles);
           const updatedPost = {
             ...postItem,
             likeProfiles: updatedLikeProfiles,
-            likes: postItem.likes - 1,
+            likes: postItem.likes,
           };
           return updatedPost;
         } else {
           return postItem;
         }
       });
+      console.log(updatedPosts);
 
       setCurrentPostState((prev) => ({
         ...prev,

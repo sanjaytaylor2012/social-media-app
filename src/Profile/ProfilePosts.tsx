@@ -35,13 +35,16 @@ import { FaRegComment } from "react-icons/fa";
 import GridPostItem from "./GridPostItem";
 import PostLoader from "@/Layout/PostLoader";
 import ProfilePostLoader from "./ProfilePostLoader";
+import { User } from "firebase/auth";
+import { NextRouter } from "next/router";
 
 type PostsProps = {
   userDoc: UserType;
+  user: User | undefined | null;
+  router: NextRouter;
 };
 
-const Posts: React.FC<PostsProps> = ({ userDoc }) => {
-  const [user] = useAuthState(auth);
+const Posts: React.FC<PostsProps> = ({ userDoc, user, router }) => {
   const [loading, setLoading] = useState(false);
   const [currentPostState, setCurrentPostState] = useRecoilState(postState);
 
@@ -79,7 +82,12 @@ const Posts: React.FC<PostsProps> = ({ userDoc }) => {
       let commentPromises: Array<Promise<QuerySnapshot<DocumentData>>> = [];
       posts.forEach((post) => {
         commentPromises.push(
-          getDocs(collection(firestore, `posts/${post.id}/comments`))
+          getDocs(
+            query(
+              collection(firestore, `posts/${post.id}/comments`),
+              orderBy("createdAt", "desc")
+            )
+          )
         );
       });
 
@@ -150,7 +158,15 @@ const Posts: React.FC<PostsProps> = ({ userDoc }) => {
           spacing={{ base: 0.5, md: 7 }}
         >
           {currentPostState.posts.map((item) => {
-            return <GridPostItem userDoc={userDoc} key={item.id} item={item} />;
+            return (
+              <GridPostItem
+                user={user}
+                router={router}
+                userDoc={userDoc}
+                key={item.id}
+                item={item}
+              />
+            );
           })}
         </SimpleGrid>
       )}
