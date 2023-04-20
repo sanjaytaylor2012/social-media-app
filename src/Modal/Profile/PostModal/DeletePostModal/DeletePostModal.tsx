@@ -43,7 +43,8 @@ const DeletePostModal: React.FC<DeletePostModalProps> = ({
   router,
 }) => {
   const [loading, setLoading] = useState(false);
-  const [postStateValue, setPostStateValue] = useRecoilState(postState);
+  // const [postStateValue, setPostStateValue] = useRecoilState(postState);
+  router.reload();
 
   const handleDeletePost = async () => {
     try {
@@ -61,11 +62,11 @@ const DeletePostModal: React.FC<DeletePostModalProps> = ({
         numPosts: increment(-1),
       });
 
-      setPostStateValue((prev) => ({
-        ...prev,
-        posts: prev.posts.filter((currentItem) => currentItem.id !== item.id),
-        numPosts: prev.posts.length - 1,
-      }));
+      // setPostStateValue((prev) => ({
+      //   ...prev,
+      //   posts: prev.posts.filter((currentItem) => currentItem.id !== item.id),
+      //   numPosts: prev.posts.length - 1,
+      // }));
 
       batch.commit();
 

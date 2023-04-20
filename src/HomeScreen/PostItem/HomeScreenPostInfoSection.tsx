@@ -25,6 +25,8 @@ type HomeScreenPostInfoSectionProps = {
   setOpenLikesModal: (input: boolean) => void;
   user: User | null | undefined;
   setOpenPostModal: (input: boolean) => void;
+  isLiked: boolean;
+  setIsLiked: (input: boolean) => void;
 };
 
 const HomeScreenPostInfoSection: React.FC<HomeScreenPostInfoSectionProps> = ({
@@ -36,19 +38,20 @@ const HomeScreenPostInfoSection: React.FC<HomeScreenPostInfoSectionProps> = ({
   setOpenPostModal,
   router,
   user,
+  isLiked,
+  setIsLiked,
 }) => {
-  const [isLiked, setIsLiked] = useState(false);
   const [navState, setNavState] = useRecoilState(NavBarState);
 
-  useEffect(() => {
-    if (item.likeProfiles) {
-      setIsLiked(
-        !!item.likeProfiles.find(
-          (item) => item.name === user!.email!.split("@")[0]
-        )
-      );
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (item.likeProfiles) {
+  //     setIsLiked(
+  //       !!item.likeProfiles.find(
+  //         (item) => item.name === user!.email!.split("@")[0]
+  //       )
+  //     );
+  //   }
+  // }, []);
 
   return (
     <Flex direction="column">
@@ -216,7 +219,7 @@ const HomeScreenPostInfoSection: React.FC<HomeScreenPostInfoSectionProps> = ({
             >
               {item.comments[0].commentorName}
             </Text>
-            <Text cursor="pointer">{item.comments[0].body}</Text>
+            <Text>{item.comments[0].body}</Text>
           </Flex>
           <Flex>
             <Text
@@ -235,7 +238,7 @@ const HomeScreenPostInfoSection: React.FC<HomeScreenPostInfoSectionProps> = ({
             >
               {item.comments[1].commentorName}
             </Text>
-            <Text cursor="pointer">{item.comments[1].body}</Text>
+            <Text>{item.comments[1].body}</Text>
           </Flex>
         </Stack>
       )}
@@ -258,7 +261,7 @@ const HomeScreenPostInfoSection: React.FC<HomeScreenPostInfoSectionProps> = ({
           >
             {item.comments[0].commentorName}
           </Text>
-          <Text cursor="pointer">{item.comments[0].body}</Text>
+          <Text>{item.comments[0].body}</Text>
         </Flex>
       )}
     </Flex>

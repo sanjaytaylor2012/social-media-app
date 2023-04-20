@@ -199,14 +199,13 @@ const index: React.FC = ({}) => {
           <>
             <Stack
               align="start"
-              // border="3px solid"
-              p={{ base: 0, sm: 4 }}
-              borderRadius={{ base: "0px", md: "10px" }}
+              borderRadius="10px"
+              p={4}
               borderColor="gray.400"
-              borderWidth={{ base: "0px", md: "3px" }}
+              borderWidth={"3px"}
               width={{ base: "0vw", md: "30vw" }}
               maxWidth="400px"
-              minWidth={{ base: "0px", sm: "300px" }}
+              display={{ sm: "none", md: "flex" }}
               // border="1px solid"
             >
               <SwitchAccountIcon profilePic={profilePicUser} user={user} />
