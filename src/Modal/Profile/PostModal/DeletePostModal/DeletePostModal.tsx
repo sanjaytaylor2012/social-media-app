@@ -44,7 +44,6 @@ const DeletePostModal: React.FC<DeletePostModalProps> = ({
 }) => {
   const [loading, setLoading] = useState(false);
   // const [postStateValue, setPostStateValue] = useRecoilState(postState);
-  router.reload();
 
   const handleDeletePost = async () => {
     try {
@@ -71,6 +70,7 @@ const DeletePostModal: React.FC<DeletePostModalProps> = ({
       batch.commit();
 
       setOpen(false);
+      // router.reload();
     } catch (error: any) {
       console.log("handleCreatePost error: ", error.message);
     }
