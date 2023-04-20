@@ -14,7 +14,12 @@ import { BsHeart } from "react-icons/bs";
 import { FaRegComment } from "react-icons/fa";
 import HomeScreenPostInfoSection from "./HomeScreenPostInfoSection";
 import PostHeader from "./PostHeader";
-import { motion, useAnimation, useSpring } from "framer-motion";
+import {
+  AnimatePresence,
+  motion,
+  useAnimation,
+  useSpring,
+} from "framer-motion";
 
 type PostItemProps = {
   item: Post;
@@ -46,23 +51,23 @@ const PostItem: React.FC<PostItemProps> = ({ item, user, router }) => {
     <Stack
       // ml={{ sm: "10px" }}
       width={{ base: "100vw", sm: "300px", md: "100%" }}
-      position="relative"
+      // position="relative"
+      z-index={0}
     >
       <PostHeader router={router} user={user} item={item} />
       {showHeart && (
-        <Flex position="absolute" top="35%" left="34%">
-          <motion.div
-            animate={{ scale: [1, 2, 2, 1, 1] }}
-            transition={{
-              duration: 3,
-              ease: "easeInOut",
-              repeat: Infinity,
-              repeatType: "loop",
-            }}
-          >
-            <Icon z-index={1} as={AiFillHeart} fontSize={100} color="white" />
-          </motion.div>
-        </Flex>
+        <motion.div
+          animate={{ scale: [1, 2, 2, 1, 1] }}
+          transition={{
+            duration: 3,
+            ease: "easeInOut",
+            repeat: Infinity,
+            repeatType: "loop",
+          }}
+          style={{ position: "absolute", top: "35%", left: "34%" }}
+        >
+          <Icon as={AiFillHeart} fontSize={100} color="white" />
+        </motion.div>
       )}
       <Image
         objectFit="cover"

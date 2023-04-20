@@ -22,6 +22,7 @@ const NavBar: React.FC = () => {
       mr={{ base: "5vw", sm: "12vw", md: "5vw" }}
       position={{ base: "fixed", sm: "unset" }}
       bottom={0}
+      z-index={2}
       backgroundColor="white"
     >
       <Flex align="center">

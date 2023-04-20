@@ -205,7 +205,7 @@ const index: React.FC = ({}) => {
               borderWidth={"3px"}
               width={{ base: "0vw", md: "30vw" }}
               maxWidth="400px"
-              display={{ sm: "none", md: "flex" }}
+              display={{ base: "none", sm: "none", md: "flex" }}
               // border="1px solid"
             >
               <SwitchAccountIcon profilePic={profilePicUser} user={user} />
