@@ -12,7 +12,7 @@ import {
   ModalBody,
   Stack,
 } from "@chakra-ui/react";
-import React from "react";
+import React, { useEffect } from "react";
 import FollowingProfileItem from "./FollowingProfileItem";
 
 type ViewFollowingModalProps = {
@@ -27,7 +27,6 @@ const ViewFollowingModal: React.FC<ViewFollowingModalProps> = ({
   userDoc,
 }) => {
   const { currentProfileState } = useProfile(userDoc);
-
   return (
     <Modal isOpen={open} onClose={() => setOpen(false)}>
       <ModalOverlay />

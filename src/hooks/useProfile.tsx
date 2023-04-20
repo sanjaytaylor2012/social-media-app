@@ -86,6 +86,10 @@ const useProfile = (userDoc?: UserType) => {
     }
   };
 
+  // useEffect(() => {
+  //   getMyFollows();
+  // }, []);
+
   const getCurrentProfileFollowers = async () => {
     try {
       const profilesDocs = await getDocs(
@@ -102,11 +106,11 @@ const useProfile = (userDoc?: UserType) => {
         totalFollowers: snippets.length,
       }));
 
-      setCurrentUserProfileState((prev) => ({
-        ...prev,
-        myFollowings: snippets as followProfile[],
-        totalFollowings: snippets.length,
-      }));
+      // setCurrentUserProfileState((prev) => ({
+      //   ...prev,
+      //   myFollowings: snippets as followProfile[],
+      //   totalFollowings: snippets.length,
+      // }));
     } catch (error: any) {
       console.log("Snippets error,", error.message);
     }

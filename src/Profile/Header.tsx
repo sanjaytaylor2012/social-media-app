@@ -120,37 +120,20 @@ const Header: React.FC<HeaderProps> = ({ userDoc, router, user }) => {
             <Text> followers</Text>
           </Flex>
 
-          {userDoc.displayName === user!.email!.split("@")[0] ? (
-            <Flex
-              align={{ base: "center" }}
-              direction={{ base: "column", sm: "row" }}
-              _hover={{ color: "gray.400" }}
-              cursor="pointer"
-              mr={6}
-              onClick={() => setOpen(true)}
-            >
-              <Text fontWeight={600} mr={2}>
-                {currentProfileState.totalFollowings}
-              </Text>
-
-              <Text> following</Text>
-            </Flex>
-          ) : (
-            <Flex
-              cursor="pointer"
-              align={{ base: "center" }}
-              _hover={{ color: "gray.400" }}
-              direction={{ base: "column", sm: "row" }}
-              onClick={() => {
-                setOpen(true);
-              }}
-            >
-              <Text fontWeight={600} mr={2}>
-                {currentProfileState.totalFollowings}
-              </Text>
-              <Text> following</Text>
-            </Flex>
-          )}
+          <Flex
+            cursor="pointer"
+            align={{ base: "center" }}
+            _hover={{ color: "gray.400" }}
+            direction={{ base: "column", sm: "row" }}
+            onClick={() => {
+              setOpen(true);
+            }}
+          >
+            <Text fontWeight={600} mr={2}>
+              {currentProfileState.totalFollowings}
+            </Text>
+            <Text> following</Text>
+          </Flex>
         </Flex>
         {userDoc.bio === "" ? (
           <Text mt={4}>{userDoc.displayName}</Text>
