@@ -85,7 +85,20 @@ const HomeScreenPostInfoSection: React.FC<HomeScreenPostInfoSectionProps> = ({
         <Icon
           cursor="pointer"
           mr={4}
+          display={{ base: "flex", sm: "none" }}
           fontSize={30}
+          as={TbMessageCircle2}
+          _hover={{ color: "gray.300" }}
+          onClick={() => {
+            setOpenMobileComments(true);
+          }}
+        />
+
+        <Icon
+          cursor="pointer"
+          mr={4}
+          fontSize={30}
+          display={{ base: "none", sm: "flex" }}
           as={TbMessageCircle2}
           _hover={{ color: "gray.300" }}
           onClick={() => {
