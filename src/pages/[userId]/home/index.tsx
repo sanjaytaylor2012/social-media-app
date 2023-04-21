@@ -208,8 +208,12 @@ const index: React.FC = ({}) => {
         <>
           {currentUserProfileState.myFollowings.length == 0 && (
             <Stack>
-              <Text mt={10}>Follow someone to see posts!</Text>
-              <Text mt={10}>Suggested:</Text>
+              <Text ml={5} mt={10}>
+                Follow someone to see posts!
+              </Text>
+              <Text ml={5} mt={10}>
+                Suggested:
+              </Text>
               {testUserProfileStates.profiles.map((item) => {
                 return (
                   <SideBarItems router={router} key={uuidv4()} item={item} />
@@ -223,7 +227,7 @@ const index: React.FC = ({}) => {
               <>
                 <Stack mb={20}>
                   {currentPostState.posts.length == 0 && (
-                    <Text>
+                    <Text ml={5}>
                       Your followings haven't posted! Follow more people to see
                       posts!
                     </Text>

@@ -3,7 +3,7 @@ import {
   CrossCheckPostState,
 } from "@/atoms/SearchBarInputAtom";
 import { UserType } from "@/atoms/userAtom";
-import { firestore } from "@/firebase/clientApp";
+import { auth, firestore } from "@/firebase/clientApp";
 import ProfilePage from "@/pages/[userId]";
 import {
   Flex,
@@ -21,6 +21,7 @@ import {
 import { getDocs, collection } from "firebase/firestore";
 import { useRouter } from "next/router";
 import React, { useEffect, useRef, useState } from "react";
+import { useAuthState } from "react-firebase-hooks/auth";
 import { AiOutlineInstagram } from "react-icons/ai";
 import { BiEqualizer } from "react-icons/bi";
 import { useRecoilState } from "recoil";

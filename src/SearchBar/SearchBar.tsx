@@ -4,7 +4,7 @@ import {
   InputPostState,
 } from "@/atoms/SearchBarInputAtom";
 import { UserType } from "@/atoms/userAtom";
-import { firestore } from "@/firebase/clientApp";
+import { auth, firestore } from "@/firebase/clientApp";
 import {
   Drawer,
   DrawerBody,
@@ -17,6 +17,7 @@ import {
 import { getDocs, collection } from "firebase/firestore";
 import { Router, useRouter } from "next/router";
 import React, { useEffect } from "react";
+import { useAuthState } from "react-firebase-hooks/auth";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import SearchBarInput from "./SearchBarInput";
 import SearchIcon from "./SearchIcon";
@@ -28,11 +29,10 @@ type SearchBarProps = {
 
 const SearchBar: React.FC<SearchBarProps> = ({ isOpen, onClose }) => {
   const setSelectedTab = useSetRecoilState(NavBarState);
-
   const [crossCheckPostState, setCrossCheckPostState] =
     useRecoilState(CrossCheckPostState);
-
   const [inputPostState, setInputState] = useRecoilState(InputPostState);
+  const [user] = useAuthState(auth);
 
   const getProfiles = async () => {
     const users = await getDocs(collection(firestore, `users`));
@@ -76,13 +76,18 @@ const SearchBar: React.FC<SearchBarProps> = ({ isOpen, onClose }) => {
 
             {crossCheckPostState.users.length == 0 && (
               <Text fontSize={20} mt={5}>
-                Suggested:{" "}
+                Suggested:
               </Text>
             )}
             {crossCheckPostState.users.length == 0 &&
-              inputPostState.users.slice(0, 5).map((item) => {
-                return <SearchIcon item={item} onClose={onClose} />;
-              })}
+              inputPostState.users
+                .filter(
+                  (item) => item.displayName != user!.email!.split("@")[0]
+                )
+                .slice(0, 5)
+                .map((item) => {
+                  return <SearchIcon item={item} onClose={onClose} />;
+                })}
           </DrawerBody>
 
           <DrawerFooter></DrawerFooter>
