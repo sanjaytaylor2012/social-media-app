@@ -1,4 +1,5 @@
 import { NavBarState } from "@/atoms/SearchBarAtom";
+import { CrossCheckPostState } from "@/atoms/SearchBarInputAtom";
 import {
   Drawer,
   DrawerBody,
@@ -9,7 +10,7 @@ import {
 } from "@chakra-ui/react";
 import { Router, useRouter } from "next/router";
 import React from "react";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import SearchBarInput from "./SearchBarInput";
 
 type SearchBarProps = {
@@ -20,6 +21,9 @@ type SearchBarProps = {
 const SearchBar: React.FC<SearchBarProps> = ({ isOpen, onClose }) => {
   const setSelectedTab = useSetRecoilState(NavBarState);
 
+  const [crossCheckPostState, setCrossCheckPostState] =
+    useRecoilState(CrossCheckPostState);
+
   return (
     <>
       <Drawer
@@ -27,6 +31,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ isOpen, onClose }) => {
         placement="left"
         onClose={() => {
           onClose(false);
+          setCrossCheckPostState({ users: [] });
           setSelectedTab((prev) => ({
             previousTab: "Search",
             selectedTab: prev.previousTab,

@@ -52,7 +52,8 @@ const SearchBarInput: React.FC<SearchBarInputProps> = ({ onClose }) => {
     if (inputPostState) {
       const usersToSet = inputPostState.users.filter(
         (user: UserType) =>
-          user.displayName.slice(0, inputName.length) === inputName
+          user.displayName.slice(0, inputName.length).toLowerCase() ===
+          inputName.toLowerCase()
       );
 
       setCrossCheckPostState((prev) => ({
