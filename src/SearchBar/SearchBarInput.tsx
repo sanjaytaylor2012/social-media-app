@@ -33,21 +33,6 @@ const SearchBarInput: React.FC<SearchBarInputProps> = ({ onClose }) => {
   const [crossCheckPostState, setCrossCheckPostState] =
     useRecoilState(CrossCheckPostState);
 
-  const getProfiles = async () => {
-    const users = await getDocs(collection(firestore, `users`));
-    const userDocs = users.docs.map((user) => ({
-      //   id: user.id,
-      ...user.data(),
-    }));
-
-    setInputState((prev) => ({
-      ...prev,
-      users: userDocs as UserType[],
-    }));
-
-    console.log(inputPostState.users);
-  };
-
   const crossCheckUsers = (inputName: string) => {
     if (inputPostState) {
       const usersToSet = inputPostState.users.filter(
@@ -75,10 +60,6 @@ const SearchBarInput: React.FC<SearchBarInputProps> = ({ onClose }) => {
       }));
     }
   };
-
-  useEffect(() => {
-    getProfiles();
-  }, []);
 
   return (
     <>
