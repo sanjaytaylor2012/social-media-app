@@ -57,3 +57,16 @@ export const currentUserStates = atom<UserStates>({
   key: "CurrentUserState",
   default: defaultUserStates,
 });
+
+interface TestProfiles {
+  profiles: followProfile[];
+}
+
+const defaultTestProfiles: TestProfiles = {
+  profiles: [],
+};
+
+export const testUserStates = atom<TestProfiles>({
+  key: "TestUserState",
+  default: defaultTestProfiles,
+});

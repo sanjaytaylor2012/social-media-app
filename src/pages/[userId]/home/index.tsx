@@ -1,6 +1,10 @@
 import { Post, postState } from "@/atoms/postAtom";
 import { NavBarState } from "@/atoms/SearchBarAtom";
-import { currentUserStates } from "@/atoms/userAtom";
+import {
+  currentUserStates,
+  followProfile,
+  testUserStates,
+} from "@/atoms/userAtom";
 import { auth, firestore } from "@/firebase/clientApp";
 import PostItem from "@/HomeScreen/PostItem/PostItem";
 import SideBarItems from "@/HomeScreen/SideBarItems";
@@ -36,6 +40,10 @@ const index: React.FC = ({}) => {
   const [currentPostState, setCurrentPostState] = useRecoilState(postState);
   const [currentUserProfileState, setCurrentUserProfileState] =
     useRecoilState(currentUserStates);
+
+  const [testUserProfileStates, setTestUserProfileStates] =
+    useRecoilState(testUserStates);
+
   const { getMyFollows } = useProfile();
   const [user] = useAuthState(auth);
   const router = useRouter();
@@ -45,8 +53,15 @@ const index: React.FC = ({}) => {
   const getPosts = async () => {
     try {
       setLoading(true);
+
       const userDocRef = doc(firestore, `users/${user!.email!.split("@")[0]}`);
       const userDoc = await getDoc(userDocRef);
+
+      if (userDoc.exists() == false) {
+        getTestProfiles();
+        return;
+      }
+
       setProfilePicUser(userDoc!.data()!.profilePic);
 
       const followingProfiles = await getDocs(
@@ -59,6 +74,11 @@ const index: React.FC = ({}) => {
       const followingProfileDocs = followingProfiles.docs.map((doc) => ({
         ...doc.data(),
       }));
+
+      if (followingProfileDocs.length == 0) {
+        getTestProfiles();
+        return;
+      }
 
       let postPromises: Array<Promise<QuerySnapshot<DocumentData>>> = [];
       [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].forEach((index) => {
@@ -152,22 +172,28 @@ const index: React.FC = ({}) => {
         ...prev,
         posts: sortedDocs,
       }));
+
       setLoading(false);
     } catch (error: any) {
       console.log(error);
     }
   };
 
-  // useEffect(() => {
-  //   // if ((router.query.userId as string) != user!.email!.split("@")[0]) {
-  //   //   router.push(`/${user!.email!.split("@")[0]}/home`);
-  //   if ((router.query.userId as string) != user!.email!.split("@")[0]) {
-  //     router.push(`/notFound`);
-  //   } else {
-  //     getPosts();
-  //     getMyFollows();
-  //   }
-  // }, []);
+  const getTestProfiles = async () => {
+    const followingProfiles = await getDocs(
+      collection(firestore, `users/test/followingProfiles`)
+    );
+
+    const followingProfileDocs = followingProfiles.docs.map((doc) => ({
+      ...doc.data(),
+    }));
+
+    setTestUserProfileStates({
+      profiles: followingProfileDocs as followProfile[],
+    });
+
+    setLoading(false);
+  };
 
   useEffect(() => {
     getPosts();
@@ -179,45 +205,78 @@ const index: React.FC = ({}) => {
       {loading ? (
         <PostLoader />
       ) : (
-        <PageContent>
-          <>
-            <Stack mb={20}>
-              {currentPostState.posts.map((item: any) => {
-                return (
-                  <>
-                    <PostItem
-                      router={router}
-                      user={user}
-                      key={uuidv4()}
-                      item={item}
-                    />
-                  </>
-                );
-              })}
-            </Stack>
-          </>
-          <>
-            <Stack
-              align="start"
-              borderRadius="10px"
-              p={4}
-              borderColor="gray.400"
-              borderWidth={"3px"}
-              width={{ base: "0vw", md: "30vw" }}
-              maxWidth="400px"
-              display={{ base: "none", sm: "none", md: "flex" }}
-              // border="1px solid"
-            >
-              <SwitchAccountIcon profilePic={profilePicUser} user={user} />
-              <Text fontSize={{ base: "0px", md: "12pt" }}>Following</Text>
-              {currentUserProfileState.myFollowings.map((item) => {
+        <>
+          {currentUserProfileState.myFollowings.length == 0 && (
+            <Stack>
+              <Text mt={10}>Follow someone to see posts!</Text>
+              <Text mt={10}>Suggested:</Text>
+              {testUserProfileStates.profiles.map((item) => {
                 return (
                   <SideBarItems router={router} key={uuidv4()} item={item} />
                 );
               })}
             </Stack>
-          </>
-        </PageContent>
+          )}
+
+          {currentUserProfileState.myFollowings.length != 0 && (
+            <PageContent>
+              <>
+                <Stack mb={20}>
+                  {currentPostState.posts.length == 0 && (
+                    <Text>
+                      Your followings haven't posted! Follow more people to see
+                      posts!
+                    </Text>
+                  )}
+                  {currentPostState.posts.map((item: any) => {
+                    return (
+                      <>
+                        <PostItem
+                          router={router}
+                          user={user}
+                          key={uuidv4()}
+                          item={item}
+                        />
+                      </>
+                    );
+                  })}
+                </Stack>
+              </>
+              <>
+                <Stack
+                  align="start"
+                  borderRadius="10px"
+                  p={4}
+                  borderColor="gray.400"
+                  borderWidth={"3px"}
+                  width={{ base: "0vw", md: "30vw" }}
+                  maxWidth="400px"
+                  display={{ base: "none", sm: "none", md: "flex" }}
+                  // border="1px solid"
+                >
+                  <Stack width="100%">
+                    <SwitchAccountIcon
+                      profilePic={profilePicUser}
+                      user={user}
+                    />
+                    <Text fontSize={{ base: "0px", md: "12pt" }}>
+                      Following
+                    </Text>
+                    {currentUserProfileState.myFollowings.map((item) => {
+                      return (
+                        <SideBarItems
+                          router={router}
+                          key={uuidv4()}
+                          item={item}
+                        />
+                      );
+                    })}
+                  </Stack>
+                </Stack>
+              </>
+            </PageContent>
+          )}
+        </>
       )}
     </>
   );

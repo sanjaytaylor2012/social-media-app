@@ -21,6 +21,7 @@ const NavBar: React.FC = () => {
       justify={{ base: "center", sm: "space-around", md: "space-around" }}
       mr={{ base: "5vw", sm: "12vw", md: "5vw" }}
       position={{ base: "fixed", sm: "unset" }}
+      // position="fixed"
       bottom={0}
       z-index={2}
       backgroundColor="white"
