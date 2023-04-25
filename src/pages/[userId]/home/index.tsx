@@ -1,5 +1,6 @@
 import { Post, postState } from "@/atoms/postAtom";
 import { NavBarState } from "@/atoms/SearchBarAtom";
+import { storiesState, Story, UserStoryItem } from "@/atoms/storiesAtom";
 import {
   currentUserStates,
   followProfile,
@@ -8,6 +9,7 @@ import {
 import { auth, firestore } from "@/firebase/clientApp";
 import PostItem from "@/HomeScreen/PostItem/PostItem";
 import SideBarItems from "@/HomeScreen/SideBarItems";
+import StoriesCarousel from "@/HomeScreen/StoriesCarousel/StoriesCarousel";
 import SwitchAccountIcon from "@/HomeScreen/SwitchAccountIcon";
 import useProfile from "@/hooks/useProfile";
 import PageContent from "@/Layout/PageContent";
@@ -31,7 +33,7 @@ import { useRouter } from "next/router";
 
 import React, { useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { AiOutlineInstagram } from "react-icons/ai";
+import { AiOutlineConsoleSql, AiOutlineInstagram } from "react-icons/ai";
 import { useRecoilState } from "recoil";
 
 // type indexProps = { postsData: Post[] };
@@ -43,6 +45,8 @@ const index: React.FC = ({}) => {
 
   const [testUserProfileStates, setTestUserProfileStates] =
     useRecoilState(testUserStates);
+
+  const [stories, setStories] = useRecoilState(storiesState);
 
   const { getMyFollows } = useProfile();
   const [user] = useAuthState(auth);
@@ -79,6 +83,68 @@ const index: React.FC = ({}) => {
         getTestProfiles();
         return;
       }
+
+      const end = new Date();
+      const start = new Date(end.getTime() - 24 * 60 * 60 * 1000); // 24 hours ago
+
+      console.log(followingProfileDocs);
+
+      let storyPromises: Array<Promise<QuerySnapshot<DocumentData>>> = [];
+      [
+        0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+        20,
+      ].forEach((index) => {
+        if (!followingProfileDocs[index]) return;
+
+        storyPromises.push(
+          getDocs(
+            query(
+              collection(firestore, `stories`),
+              where("creatorName", "==", followingProfileDocs[index].name),
+              where("createdAt", ">", start),
+              where("createdAt", "<", end),
+              orderBy("createdAt", "desc"),
+              limit(20)
+            )
+          )
+        );
+      });
+
+      const storiesResults = await Promise.all(storyPromises);
+
+      const feedStories: Story[] = [];
+
+      storiesResults.forEach((result) => {
+        const stories = result.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        })) as Story[];
+        feedStories.push(...stories);
+        console.log(feedStories);
+      });
+
+      const userMap: Map<string, UserStoryItem> = new Map();
+
+      feedStories.forEach((story) => {
+        const user = userMap.get(story.creatorName);
+        if (user) {
+          user.stories.push(story);
+        } else {
+          userMap.set(story.creatorName, {
+            name: story.creatorName,
+            creatorProfilePic: story.creatorProfilePic,
+            stories: [story],
+          });
+        }
+      });
+
+      const storyObjects = Array.from(userMap.values());
+
+      setStories({
+        UserStoryItems: storyObjects,
+      });
+
+      //getting posts
 
       let postPromises: Array<Promise<QuerySnapshot<DocumentData>>> = [];
       [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].forEach((index) => {
@@ -228,10 +294,11 @@ const index: React.FC = ({}) => {
                 <Stack mb={20}>
                   {currentPostState.posts.length == 0 && (
                     <Text ml={5}>
-                      Your followings haven't posted! Follow more people to see
-                      posts!
+                      The people you follow haven't posted! Follow more people
+                      to see posts!
                     </Text>
                   )}
+                  {/* <StoriesCarousel profilePicUser={profilePicUser} /> TODO: STORY CAROUSEL */}
                   {currentPostState.posts.map((item: any) => {
                     return (
                       <>
