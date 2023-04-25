@@ -8,7 +8,7 @@ interface PageContentProps {
 const PageContent: React.FC<PageContentProps> = ({ children }) => {
   return (
     <Flex mt={{ base: "none", sm: 10 }}>
-      <Flex width="95%" justify="center" maxWidth="860px">
+      <Flex width={"100%"} justify="center" maxWidth="860px">
         {/* LHS */}
         <Flex
           direction="column"
@@ -18,7 +18,11 @@ const PageContent: React.FC<PageContentProps> = ({ children }) => {
           {children && children[0 as keyof typeof children]}
         </Flex>
         {/* RHS */}
-        <Flex direction="column" flexGrow={1}>
+        <Flex
+          display={{ base: "none", lg: "flex" }}
+          direction="column"
+          flexGrow={1}
+        >
           {children && children[1 as keyof typeof children]}
         </Flex>
       </Flex>

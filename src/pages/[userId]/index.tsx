@@ -1,6 +1,5 @@
 import { auth, firestore } from "@/firebase/clientApp";
 import { Flex, Icon, Stack, Text, useStatStyles } from "@chakra-ui/react";
-import { User } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import { GetServerSidePropsContext } from "next";
 import React, { useState } from "react";

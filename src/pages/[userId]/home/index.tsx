@@ -1,5 +1,4 @@
 import { Post, postState } from "@/atoms/postAtom";
-import { NavBarState } from "@/atoms/SearchBarAtom";
 import { storiesState, Story, UserStoryItem } from "@/atoms/storiesAtom";
 import {
   currentUserStates,
@@ -291,7 +290,7 @@ const index: React.FC = ({}) => {
           {currentUserProfileState.myFollowings.length != 0 && (
             <PageContent>
               <>
-                <Stack mb={20}>
+                <Stack mb={20} gap={5}>
                   {currentPostState.posts.length == 0 && (
                     <Text ml={5}>
                       The people you follow haven't posted! Follow more people
@@ -322,7 +321,7 @@ const index: React.FC = ({}) => {
                   borderWidth={"3px"}
                   width={{ base: "0vw", md: "30vw" }}
                   maxWidth="400px"
-                  display={{ base: "none", sm: "none", md: "flex" }}
+                  // display={{ base: "none", sm: "none", lg: "flex" }}
                   // border="1px solid"
                 >
                   <Stack width="100%">
